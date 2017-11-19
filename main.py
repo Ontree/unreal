@@ -68,6 +68,8 @@ class Application(object):
     if USE_GPU:
       device = "/gpu:0"
     
+    if not os.path.isdir(flags.log_file):
+      os.makedirs(flags.log_file)
     initial_learning_rate = log_uniform(flags.initial_alpha_low,
                                         flags.initial_alpha_high,
                                         flags.initial_alpha_log_rate)
@@ -187,8 +189,8 @@ class Application(object):
         t.join()
   
     # Save
-    if not os.path.exists(flags.checkpoint_dir):
-      os.mkdir(flags.checkpoint_dir)
+    if not os.path.isdir(flags.checkpoint_dir):
+      os.makedirs(flags.checkpoint_dir)
   
     # Write wall time
     wall_t = time.time() - self.start_time
