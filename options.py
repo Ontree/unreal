@@ -19,7 +19,6 @@ def get_options(option_type):
   tf.app.flags.DEFINE_boolean("use_reward_prediction", True, "whether to use reward prediction")
   tf.app.flags.DEFINE_string("name", "tmp", "name used to store checkpoints and log")
   tf.app.flags.DEFINE_string("checkpoint_dir", '/media/bighdd6/minghai1/capstone/results/' + tf.app.flags.FLAGS.name + '/checkpoints', "checkpoint directory")
-  #print(tf.app.flags.FLAGS.checkpoint_dir)
   # For training
   if option_type == 'training':
     tf.app.flags.DEFINE_integer("parallel_size", 8, "parallel thread size")
@@ -27,8 +26,6 @@ def get_options(option_type):
     tf.app.flags.DEFINE_float("rmsp_alpha", 0.99, "decay parameter for rmsprop")
     tf.app.flags.DEFINE_float("rmsp_epsilon", 0.1, "epsilon parameter for rmsprop")
     tf.app.flags.DEFINE_string("log_file", '/media/bighdd6/minghai1/capstone/results/' + tf.app.flags.FLAGS.name , "log file directory")
-    #if not tf.app.flags.FLAGS.log_file:
-    #  tf.app.flags.FLAGS.log_file = 
     tf.app.flags.DEFINE_float("initial_alpha_low", 1e-4, "log_uniform low limit for learning rate")
     tf.app.flags.DEFINE_float("initial_alpha_high", 5e-3, "log_uniform high limit for learning rate")
     tf.app.flags.DEFINE_float("initial_alpha_log_rate", 0.5, "log_uniform interpolate rate for learning rate")
