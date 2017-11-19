@@ -14,9 +14,9 @@ def get_options(option_type):
   # Common
   tf.app.flags.DEFINE_string("env_type", "gym", "environment type (lab or gym or maze)")
   tf.app.flags.DEFINE_string("env_name", "Pong-v0",  "environment name")
-  tf.app.flags.DEFINE_boolean("use_pixel_change", True, "whether to use pixel change")
-  tf.app.flags.DEFINE_boolean("use_value_replay", True, "whether to use value function replay")
-  tf.app.flags.DEFINE_boolean("use_reward_prediction", True, "whether to use reward prediction")
+  tf.app.flags.DEFINE_boolean("use_pixel_change", False, "whether to use pixel change")
+  tf.app.flags.DEFINE_boolean("use_value_replay", False, "whether to use value function replay")
+  tf.app.flags.DEFINE_boolean("use_reward_prediction", False, "whether to use reward prediction")
   tf.app.flags.DEFINE_string("name", "tmp", "name used to store checkpoints and log")
   tf.app.flags.DEFINE_string("checkpoint_dir", '/media/bighdd6/minghai1/capstone/results/' + tf.app.flags.FLAGS.name + '/checkpoints', "checkpoint directory")
   # For training
