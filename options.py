@@ -19,7 +19,7 @@ def get_options(option_type):
   tf.app.flags.DEFINE_boolean("use_reward_prediction", True, "whether to use reward prediction")
   tf.app.flags.DEFINE_string("name", "tmp", "name used to store checkpoints and log")
   tf.app.flags.DEFINE_string("checkpoint_dir", '/media/bighdd6/minghai1/capstone/results/' + tf.app.flags.FLAGS.name + '/checkpoints', "checkpoint directory")
-  print(tf.app.flags.FLAGS.checkpoint_dir)
+  #print(tf.app.flags.FLAGS.checkpoint_dir)
   # For training
   if option_type == 'training':
     tf.app.flags.DEFINE_integer("parallel_size", 8, "parallel thread size")
