@@ -52,7 +52,7 @@ class UnrealModel(object):
     scope_name = "net_{0}".format(self._thread_index)
     with tf.device(self._device), tf.variable_scope(scope_name) as scope:
       # lstm
-      self.lstm_cell = tf.contrib.rnn.BasicLSTMCell(256, state_is_tuple=True)
+      self.lstm_cell = tf.nn.rnn_cell.BasicLSTMCell(256, state_is_tuple=True)
       
       # [base A3C network]
       self._create_base_network()
@@ -90,7 +90,7 @@ class UnrealModel(object):
     self.base_initial_lstm_state0 = tf.placeholder(tf.float32, [1, 256])
     self.base_initial_lstm_state1 = tf.placeholder(tf.float32, [1, 256])
     
-    self.base_initial_lstm_state = tf.contrib.rnn.LSTMStateTuple(self.base_initial_lstm_state0,
+    self.base_initial_lstm_state = tf.nn.rnn_cell.LSTMStateTuple(self.base_initial_lstm_state0,
                                                                  self.base_initial_lstm_state1)
 
     self.base_lstm_outputs, self.base_lstm_state = \
@@ -349,7 +349,7 @@ class UnrealModel(object):
 
 
   def reset_state(self):
-    self.base_lstm_state_out = tf.contrib.rnn.LSTMStateTuple(np.zeros([1, 256]),
+    self.base_lstm_state_out = tf.nn.rnn_cell.LSTMStateTuple(np.zeros([1, 256]),
                                                              np.zeros([1, 256]))
 
   def run_base_policy_and_value(self, sess, s_t, last_action_reward):
