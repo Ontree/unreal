@@ -149,7 +149,7 @@ class Experience(object):
 
     total_raw_reward = .0
     for i in range(self._reward_length):
-      total_raw_reward += self._frames[raw_start_frame_index+3+i]
+      total_raw_reward += self._frames[raw_start_frame_index+3+i].raw_reward
 
     sampled_frames[-1].raw_reward = total_raw_reward
 
