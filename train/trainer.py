@@ -26,6 +26,7 @@ class Trainer(object):
                use_pixel_change,
                use_value_replay,
                use_reward_prediction,
+               reward_length,
                pixel_change_lambda,
                entropy_beta,
                local_t_max,
@@ -64,7 +65,7 @@ class Trainer(object):
                                                        self.local_network.get_vars())
     
     self.sync = self.local_network.sync_from(global_network)
-    self.experience = Experience(self.experience_history_size)
+    self.experience = Experience(self.experience_history_size, reward_length)
     self.local_t = 0
     self.initial_learning_rate = initial_learning_rate
     self.episode_reward = 0

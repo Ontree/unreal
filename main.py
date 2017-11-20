@@ -112,6 +112,7 @@ class Application(object):
                         flags.use_pixel_change,
                         flags.use_value_replay,
                         flags.use_reward_prediction,
+                        flags.reward_length,
                         flags.pixel_change_lambda,
                         flags.entropy_beta,
                         flags.local_t_max,
