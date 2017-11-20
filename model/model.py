@@ -249,7 +249,7 @@ class UnrealModel(object):
 
     
   def _create_rp_network(self):
-    self.rp_input = tf.placeholder("float", [3, 84, 84, 3])
+    self.rp_input = tf.placeholder("float", [4, 84, 84, 3])
 
     # RP conv layers
     rp_conv_output = self._base_conv_layers(self.rp_input, reuse=True)
