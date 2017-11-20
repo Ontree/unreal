@@ -5,12 +5,17 @@ from __future__ import print_function
 
 import numpy as np
 from collections import deque
+from options import get_options
+import tensorflow as tf
+import random
 
+flags = get_options("training")
 
 class ExperienceFrame(object):
   def __init__(self, state, reward, action, terminal, pixel_change, last_action, last_reward):
     self.state = state
     self.action = action # (Taken action with the 'state')
+    self.raw_reward = reward
     self.reward = np.clip(reward, -1, 1) # Reward with the 'state'. (Clipped)
     self.terminal = terminal # (Whether terminated when 'state' was inputted)
     self.pixel_change = pixel_change
@@ -51,7 +56,7 @@ class Experience(object):
     # frame indices for non zero rewards
     self._non_zero_reward_indices = deque()
     self._top_frame_index = 0
-
+    self._reward_length = flags.reward_length
 
   def add_frame(self, frame):
     if frame.terminal and len(self._frames) > 0 and self._frames[-1].terminal:
@@ -125,13 +130,16 @@ class Experience(object):
     elif len(self._non_zero_reward_indices) == 0:
       # non zero rewards container was empty
       from_zero = True
-
+    end_frame_index = None
     if from_zero:
-      index = np.random.randint(len(self._zero_reward_indices))
-      end_frame_index = self._zero_reward_indices[index]
+      while not end_frame_index or end_frame_index + (flags.reward_length - 1) >= len(self._frames):
+        index = np.random.randint(len(self._zero_reward_indices))
+        end_frame_index = self._zero_reward_indices[index]
     else:
-      index = np.random.randint(len(self._non_zero_reward_indices))
-      end_frame_index = self._non_zero_reward_indices[index]
+      while not end_frame_index or end_frame_index + (flags.reward_length - 1) >= len(self._frames):
+        index = np.random.randint(len(self._non_zero_reward_indices))
+        end_frame_index = self._non_zero_reward_indices[index]
+      end_frame_index = random.randrange(end_frame_index-(flags.reward_length - 1), end_frame_index+1)
 
     start_frame_index = end_frame_index-3
     raw_start_frame_index = start_frame_index - self._top_frame_index
@@ -141,5 +149,11 @@ class Experience(object):
     for i in range(4):
       frame = self._frames[raw_start_frame_index+i]
       sampled_frames.append(frame)
+
+    total_raw_reward = .0
+    for i in range(flags.reward_length):
+      total_raw_reward += self._frames[raw_start_frame_index+3+i]
+
+    sampled_frames[-1].raw_reward = total_raw_reward
 
     return sampled_frames
