@@ -26,6 +26,7 @@ class Trainer(object):
                use_pixel_change,
                use_value_replay,
                use_reward_prediction,
+               use_future_reward_prediction,
                pixel_change_lambda,
                entropy_beta,
                local_t_max,
@@ -42,6 +43,7 @@ class Trainer(object):
     self.use_pixel_change = use_pixel_change
     self.use_value_replay = use_value_replay
     self.use_reward_prediction = use_reward_prediction
+    self.use_future_reward_prediction = use_future_reward_prediction
     self.local_t_max = local_t_max
     self.gamma = gamma
     self.gamma_pc = gamma_pc
@@ -54,6 +56,7 @@ class Trainer(object):
                                      use_pixel_change,
                                      use_value_replay,
                                      use_reward_prediction,
+                                     use_future_reward_prediction,
                                      pixel_change_lambda,
                                      entropy_beta,
                                      device)
@@ -319,7 +322,7 @@ class Trainer(object):
       batch_rp_si.append(rp_experience_frames[i].state)
 
     # one hot vector for target reward
-    r = rp_experience_frames[1].reward
+    r = rp_experience_frames[3].reward
     rp_c = [0.0, 0.0, 0.0]
     if r == 0:
       rp_c[0] = 1.0 # zero
@@ -329,6 +332,36 @@ class Trainer(object):
       rp_c[2] = 1.0 # negative
     batch_rp_c.append(rp_c)
     return batch_rp_si, batch_rp_c
+
+
+  def _process_frp(self):
+    # [Reward prediction]
+    rp_experience_frames = self.experience.sample_rp_sequence()
+    # 4 frames
+
+    batch_rp_si = []
+    batch_rp_c = []
+    
+    for i in range(3):
+      batch_rp_si.append(rp_experience_frames[i].state)
+
+    # one hot vector for target reward
+    r = rp_experience_frames[3].reward
+    rp_c = [0.0, 0.0, 0.0]
+    if r == 0:
+      rp_c[0] = 1.0 # zero
+    elif r > 0:
+      rp_c[1] = 1.0 # positive
+    else:
+      rp_c[2] = 1.0 # negative
+    batch_rp_c.append(rp_c)
+
+    batch_rp_action = []
+    action_index = rp_experience_frames[3].action
+    action_one_hot = np.zeros([self.action_size])
+    action_one_hot[action_index] = 1.0
+    batch_rp_action.append(action_one_hot)
+    return batch_rp_si, batch_rp_c, batch_rp_action
   
   
   def process(self, sess, global_t, summary_writer, summary_op, score_input):
@@ -393,6 +426,16 @@ class Trainer(object):
         self.local_network.rp_c_target: batch_rp_c
       }
       feed_dict.update(rp_feed_dict)
+    
+    # [Future reward prediction]
+    if self.use_future_reward_prediction:
+      batch_frp_si, batch_frp_c, batch_frp_action = self._process_frp()
+      frp_feed_dict = {
+        self.local_network.frp_input: batch_frp_si,
+        self.local_network.frp_c_target: batch_frp_c,
+        self.local_network.frp_action_input: batch_frp_action
+      }
+      feed_dict.update(frp_feed_dict)
 
     # Calculate gradients and copy them to global network.
     sess.run( self.apply_gradients, feed_dict=feed_dict )

@@ -33,6 +33,7 @@ class UnrealModel(object):
                use_pixel_change,
                use_value_replay,
                use_reward_prediction,
+               use_future_reward_prediction,
                pixel_change_lambda,
                entropy_beta,
                device,
@@ -45,6 +46,7 @@ class UnrealModel(object):
     self._use_reward_prediction = use_reward_prediction
     self._pixel_change_lambda = pixel_change_lambda
     self._entropy_beta = entropy_beta
+    self._use_future_reward_prediction = use_future_reward_prediction
     
     self._create_network(for_display)
     
@@ -70,6 +72,10 @@ class UnrealModel(object):
       # [Reward prediction network]
       if self._use_reward_prediction:
         self._create_rp_network()
+
+      # [Future reward prediction network]
+      if self._use_future_reward_prediction:
+        self._create_frp_network()
       
       self.reset_state()
 
@@ -263,6 +269,26 @@ class UnrealModel(object):
     self.rp_c = tf.nn.softmax(tf.matmul(rp_conv_output_reshaped, W_fc1) + b_fc1)
     # (1,3)
 
+  def _create_frp_network(self):
+    self.frp_input = tf.placeholder("float", [3, 84, 84, 3])
+    self.frp_action_input = tf.placeholder("float", [1, self._action_size])
+    # RP conv layers
+    frp_conv_output = self._base_conv_layers(self.frp_input, reuse=True)
+    frp_conv_output_reshaped = tf.reshape(frp_conv_output, [1,9*9*32*3])
+    f_layer_1_dim = 256
+    with tf.variable_scope("frp_fc") as scope:
+      # Weights
+      W_fc_action = self._fc_variable([self._action_size, f_layer_1_dim], "frp_fc_action", use_bias=False)
+      W_fc_states = self._fc_variable([9*9*32*3, f_layer_1_dim], "frp_fc_states", use_bias=False)
+      W_fc_logit, b_fc_logit = self._fc_variable([f_layer_1_dim, 3], "frp_fc_logit")
+
+    # Reawrd prediction class output. (zero, positive, negative)
+    self.action_feature = tf.matmul(self.frp_action_input, W_fc_action)
+    self.states_feature = tf.matmul(frp_conv_output_reshaped, W_fc_states)
+    self.future_feature = tf.multiply(self.action_feature, self.states_feature, 'future_feature')
+    self.frp_c = tf.nn.softmax(tf.matmul(self.future_feature, W_fc_logit) + b_fc_logit)
+    # (1,3)
+
   def _base_loss(self):
     # [base A3C]
     # Taken action (input for policy)
@@ -327,6 +353,16 @@ class UnrealModel(object):
     rp_c = tf.clip_by_value(self.rp_c, 1e-20, 1.0)
     rp_loss = -tf.reduce_sum(self.rp_c_target * tf.log(rp_c))
     return rp_loss
+
+
+  def _frp_loss(self):
+    # Future reward prediction target. one hot vector
+    self.frp_c_target = tf.placeholder("float", [1,3])
+    
+    # Future reward prediction loss (output)
+    frp_c = tf.clip_by_value(self.frp_c, 1e-20, 1.0)
+    frp_loss = -tf.reduce_sum(self.frp_c_target * tf.log(frp_c))
+    return frp_loss
     
     
   def prepare_loss(self):
@@ -344,6 +380,10 @@ class UnrealModel(object):
       if self._use_reward_prediction:
         rp_loss = self._rp_loss()
         loss = loss + rp_loss
+
+      if self._use_future_reward_prediction:
+        frp_loss = self._frp_loss()
+        loss = loss + frp_loss
       
       self.total_loss = loss
 
@@ -410,6 +450,13 @@ class UnrealModel(object):
                          feed_dict = {self.rp_input : s_t} )
     return rp_c_out[0]
 
+
+  def run_frp_c(self, sess, s_t, action):
+    # For display tool
+    frp_c_out = sess.run( self.frp_c,
+                         feed_dict = {self.frp_input : s_t, self.frp_action_input: action} )
+    return frp_c_out[0]
+
   
   def get_vars(self):
     return self.variables
@@ -430,17 +477,19 @@ class UnrealModel(object):
         return tf.group(*sync_ops, name=name)
       
 
-  def _fc_variable(self, weight_shape, name):
+  def _fc_variable(self, weight_shape, name, use_bias=True):
     name_w = "W_{0}".format(name)
-    name_b = "b_{0}".format(name)
     
     input_channels  = weight_shape[0]
     output_channels = weight_shape[1]
-    bias_shape = [output_channels]
-
     weight = tf.get_variable(name_w, weight_shape, initializer=fc_initializer(input_channels))
-    bias   = tf.get_variable(name_b, bias_shape,   initializer=fc_initializer(input_channels))
-    return weight, bias
+    res = weight
+    if use_bias:
+      name_b = "b_{0}".format(name)
+      bias_shape = [output_channels]
+      bias   = tf.get_variable(name_b, bias_shape,   initializer=fc_initializer(input_channels))
+      res = (weight, bias)
+    return res
 
   
   def _conv_variable(self, weight_shape, name, deconv=False):
