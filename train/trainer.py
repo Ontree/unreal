@@ -343,7 +343,7 @@ class Trainer(object):
     batch_rp_si = []
     batch_rp_c = []
     
-    for i in range(3):
+    for i in range(4):
       batch_rp_si.append(rp_experience_frames[i].state)
 
     # one hot vector for target reward
