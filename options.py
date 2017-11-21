@@ -21,10 +21,10 @@ def get_options(option_type):
   tf.app.flags.DEFINE_string("name", "tmp", "name used to store checkpoints and log")
   tf.app.flags.DEFINE_integer("reward_length", 1, "length of future reward for reward prediction")
   tf.app.flags.DEFINE_integer("hdd", 6, "hdd to store log")
-  tf.app.flags.DEFINE_string("checkpoint_dir", '/media/bighd'+str(tf.app.flags.FLAGS.hdd)+'/minghai1/capstone/results/' + tf.app.flags.FLAGS.name + '/checkpoints', "checkpoint directory")
+  tf.app.flags.DEFINE_string("checkpoint_dir", '/media/bighdd'+str(tf.app.flags.FLAGS.hdd)+'/minghai1/capstone/results/' + tf.app.flags.FLAGS.name + '/checkpoints', "checkpoint directory")
   # For training
   if option_type == 'training':
-    tf.app.flags.DEFINE_integer("parallel_size", 8, "parallel thread size")
+    tf.app.flags.DEFINE_integer("parallel_size", 8, "parallel hread size")
     tf.app.flags.DEFINE_integer("local_t_max", 20, "repeat step size")
     tf.app.flags.DEFINE_float("rmsp_alpha", 0.99, "decay parameter for rmsprop")
     tf.app.flags.DEFINE_float("rmsp_epsilon", 0.1, "epsilon parameter for rmsprop")
