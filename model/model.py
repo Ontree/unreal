@@ -274,7 +274,7 @@ class UnrealModel(object):
     self.frp_action_input = tf.placeholder("float", [1, self._action_size])
     # RP conv layers
     frp_conv_output = self._base_conv_layers(self.frp_input, reuse=True)
-    frp_conv_output_reshaped = tf.reshape(frp_conv_output, [1,9*9*32*3])
+    frp_conv_output_reshaped = tf.reshape(frp_conv_output, [1,9*9*32*4])
     f_layer_0_dim = 1024
     f_layer_1_dim = 2048
     with tf.variable_scope("frp_fc") as scope:
