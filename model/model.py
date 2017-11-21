@@ -285,7 +285,7 @@ class UnrealModel(object):
     with tf.variable_scope("frp_fc") as scope:
       # Weights
       W_fc_action = self._fc_variable([self._action_size, f_layer_1_dim], "frp_fc_action", use_bias=False, initializer_uni=0.1)
-      W_fc_states0, b_fc_action0 = self._fc_variable([9*9*32*3, f_layer_0_dim], "frp_fc_states0")
+      W_fc_states0, b_fc_action0 = self._fc_variable([9*9*32*4, f_layer_0_dim], "frp_fc_states0")
       W_fc_states1 = self._fc_variable([f_layer_0_dim, f_layer_1_dim], "frp_fc_states1", use_bias=False, initializer_uni=1)
       W_fc_logit, b_fc_logit = self._fc_variable([f_layer_1_dim, 3], "frp_fc_logit")
 
