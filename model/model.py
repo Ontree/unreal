@@ -15,6 +15,11 @@ def fc_initializer(input_channels, dtype=tf.float32):
     return tf.random_uniform(shape, minval=-d, maxval=d)
   return _initializer
 
+def uni_initializer(d, dtype=tf.float32):
+  def _initializer(shape, dtype=dtype, partition_info=None):
+    return tf.random_uniform(shape, minval=-d, maxval=d)
+  return _initializer
+
 
 def conv_initializer(kernel_width, kernel_height, input_channels, dtype=tf.float32):
   def _initializer(shape, dtype=dtype, partition_info=None):
@@ -488,7 +493,7 @@ class UnrealModel(object):
     if not initializer_uni:
       initializer = fc_initializer(input_channels)
     else:
-      initializer = tf.random_uniform(weight_shape, minval=-initializer_uni, maxval=initializer_uni)
+      initializer = uni_initializer(initializer_uni)
 
     weight = tf.get_variable(name_w, weight_shape, initializer=initializer)
     res = weight
