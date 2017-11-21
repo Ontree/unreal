@@ -14,7 +14,7 @@ class TestExperience(unittest.TestCase):
     experience.add_frame(frame)
     
   def test_process(self):
-    experience = Experience(10)
+    experience = Experience(10, 1)
 
     for i in range(10):
       if i == 5:

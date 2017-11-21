@@ -255,15 +255,15 @@ class UnrealModel(object):
 
     
   def _create_rp_network(self):
-    self.rp_input = tf.placeholder("float", [3, 84, 84, 3])
+    self.rp_input = tf.placeholder("float", [4, 84, 84, 3])
 
     # RP conv layers
     rp_conv_output = self._base_conv_layers(self.rp_input, reuse=True)
-    rp_conv_output_reshaped = tf.reshape(rp_conv_output, [1,9*9*32*3])
+    rp_conv_output_reshaped = tf.reshape(rp_conv_output, [1,9*9*32*4])
     
     with tf.variable_scope("rp_fc") as scope:
       # Weights
-      W_fc1, b_fc1 = self._fc_variable([9*9*32*3, 3], "rp_fc1")
+      W_fc1, b_fc1 = self._fc_variable([9*9*32*4, 3], "rp_fc1")
 
     # Reawrd prediction class output. (zero, positive, negative)
     self.rp_c = tf.nn.softmax(tf.matmul(rp_conv_output_reshaped, W_fc1) + b_fc1)

@@ -27,6 +27,7 @@ class Trainer(object):
                use_value_replay,
                use_reward_prediction,
                use_future_reward_prediction,
+               reward_length,
                pixel_change_lambda,
                entropy_beta,
                local_t_max,
@@ -67,7 +68,7 @@ class Trainer(object):
                                                        self.local_network.get_vars())
     
     self.sync = self.local_network.sync_from(global_network)
-    self.experience = Experience(self.experience_history_size)
+    self.experience = Experience(self.experience_history_size, reward_length)
     self.local_t = 0
     self.initial_learning_rate = initial_learning_rate
     self.episode_reward = 0
@@ -318,11 +319,11 @@ class Trainer(object):
     batch_rp_si = []
     batch_rp_c = []
     
-    for i in range(3):
+    for i in range(4):
       batch_rp_si.append(rp_experience_frames[i].state)
 
     # one hot vector for target reward
-    r = rp_experience_frames[3].reward
+    r = rp_experience_frames[3].raw_reward
     rp_c = [0.0, 0.0, 0.0]
     if r == 0:
       rp_c[0] = 1.0 # zero
@@ -346,7 +347,7 @@ class Trainer(object):
       batch_rp_si.append(rp_experience_frames[i].state)
 
     # one hot vector for target reward
-    r = rp_experience_frames[3].reward
+    r = rp_experience_frames[3].raw_reward
     rp_c = [0.0, 0.0, 0.0]
     if r == 0:
       rp_c[0] = 1.0 # zero
