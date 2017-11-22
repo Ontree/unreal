@@ -151,6 +151,8 @@ class Experience(object):
     for i in range(self._reward_length):
       total_raw_reward += self._frames[raw_start_frame_index+3+i].raw_reward
 
-    sampled_frames[-1].raw_reward = total_raw_reward
+    next_frame = None
+    if end_frame_index - self._top_frame_index + 1 < len(self._frames):
+      next_frame = self._frames[raw_start_frame_index+4]
 
-    return sampled_frames
+    return sampled_frames, total_raw_reward, next_frame
