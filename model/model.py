@@ -88,6 +88,8 @@ class UnrealModel(object):
           self._create_decoder_network(self.rp_conv_output_reshaped, False, 3)
         elif self._use_future_reward_prediction:
           self._create_decoder_network(self.future_feature, False, 3)
+        else:
+          raise EnvironmentError('no rp or frp')
       self.reset_state()
 
       self.variables = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, scope=scope_name)
@@ -283,14 +285,14 @@ class UnrealModel(object):
 
     # RP conv layers
     rp_conv_output = self._base_conv_layers(self.rp_input, reuse=True)
-    rp_conv_output_reshaped = tf.reshape(rp_conv_output, [1,9*9*32*4])
+    self.rp_conv_output_reshaped = tf.reshape(rp_conv_output, [1,9*9*32*4])
     
     with tf.variable_scope("rp_fc") as scope:
       # Weights
       W_fc1, b_fc1 = self._fc_variable([9*9*32*4, 3], "rp_fc1")
 
     # Reawrd prediction class output. (zero, positive, negative)
-    self.rp_c = tf.nn.softmax(tf.matmul(rp_conv_output_reshaped, W_fc1) + b_fc1)
+    self.rp_c = tf.nn.softmax(tf.matmul(self.rp_conv_output_reshaped, W_fc1) + b_fc1)
     # (1,3)
 
   def _create_frp_network(self):
