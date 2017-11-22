@@ -279,6 +279,26 @@ class UnrealModel(object):
     self.frp_action_input = tf.placeholder("float", [1, self._action_size])
     # RP conv layers
     frp_conv_output = self._base_conv_layers(self.frp_input, reuse=True)
+    frp_conv_output_size = 9*9*32*4
+    frp_conv_output_reshaped = tf.reshape(frp_conv_output, [1,frp_conv_output_size])
+    with tf.variable_scope("frp_fc") as scope:
+      # Weights
+      W_fc_action = self._fc_variable([self._action_size, frp_conv_output_size], "frp_fc_action", use_bias=False, initializer_uni=1)
+      #W_fc_states0, b_fc_action0 = self._fc_variable([9*9*32*4, f_layer_0_dim], "frp_fc_states0")
+      #W_fc_states = self._fc_variable([f_layer_0_dim, f_layer_1_dim], "frp_fc_states1", use_bias=False, initializer_uni=1)
+      W_fc_logit, b_fc_logit = self._fc_variable([frp_conv_output_size, 3], "frp_fc_logit")
+
+    # Reawrd prediction class output. (zero, positive, negative)
+    action_feature = tf.matmul(self.frp_action_input, W_fc_action)
+    #self.states_feature0 = tf.nn.relu(tf.matmul(frp_conv_output_reshaped, W_fc_states0) + b_fc_action0)
+    #self.states_feature1 = tf.matmul(self.states_feature0, W_fc_states1)
+    self.future_feature = tf.multiply(action_feature, frp_conv_output_reshaped, 'future_feature')
+    self.frp_c = tf.nn.softmax(tf.matmul(self.future_feature, W_fc_logit) + b_fc_logit)
+    '''
+    self.frp_input = tf.placeholder("float", [4, 84, 84, 3])
+    self.frp_action_input = tf.placeholder("float", [1, self._action_size])
+    # RP conv layers
+    frp_conv_output = self._base_conv_layers(self.frp_input, reuse=True)
     frp_conv_output_reshaped = tf.reshape(frp_conv_output, [1,9*9*32*4])
     f_layer_0_dim = 1024
     f_layer_1_dim = 2048
@@ -296,6 +316,7 @@ class UnrealModel(object):
     self.future_feature = tf.multiply(self.action_feature, self.states_feature1, 'future_feature')
     self.frp_c = tf.nn.softmax(tf.matmul(self.future_feature, W_fc_logit) + b_fc_logit)
     # (1,3)
+    '''
 
   def _base_loss(self):
     # [base A3C]
