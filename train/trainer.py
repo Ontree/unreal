@@ -27,6 +27,7 @@ class Trainer(object):
                use_value_replay,
                use_reward_prediction,
                use_future_reward_prediction,
+               use_autoencoder,
                reward_length,
                pixel_change_lambda,
                entropy_beta,
@@ -45,6 +46,7 @@ class Trainer(object):
     self.use_value_replay = use_value_replay
     self.use_reward_prediction = use_reward_prediction
     self.use_future_reward_prediction = use_future_reward_prediction
+    self.use_autoencoder = use_autoencoder
     self.local_t_max = local_t_max
     self.gamma = gamma
     self.gamma_pc = gamma_pc

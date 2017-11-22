@@ -18,6 +18,7 @@ def get_options(option_type):
   tf.app.flags.DEFINE_boolean("use_value_replay", False, "whether to use value function replay")
   tf.app.flags.DEFINE_boolean("use_reward_prediction", False, "whether to use reward prediction")
   tf.app.flags.DEFINE_boolean("use_future_reward_prediction", False, "whether to use future reward prediction")
+  tf.app.flags.DEFINE_boolean("use_autoencoder", False, "whether to use antoencoder loss")
   tf.app.flags.DEFINE_string("name", "tmp", "name used to store checkpoints and log")
   tf.app.flags.DEFINE_integer("reward_length", 1, "length of future reward for reward prediction")
   tf.app.flags.DEFINE_integer("hdd", 6, "hdd to store log")
