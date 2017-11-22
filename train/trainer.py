@@ -428,7 +428,7 @@ class Trainer(object):
     # [Reward prediction]
     next_frame = None
     if self.use_reward_prediction:
-      batch_rp_si, batch_rp_c, _ = self._process_replay()
+      batch_rp_si, batch_rp_c, next_frame = self._process_replay()
       rp_feed_dict = {
         self.local_network.rp_input: batch_rp_si,
         self.local_network.rp_c_target: batch_rp_c
@@ -438,7 +438,7 @@ class Trainer(object):
     # [Future reward prediction]
     if self.use_future_reward_prediction:
 
-      batch_frp_si, batch_frp_c, _, batch_frp_action = self._process_replay(action=True)
+      batch_frp_si, batch_frp_c, next_frame, batch_frp_action = self._process_replay(action=True)
       frp_feed_dict = {
         self.local_network.frp_input: batch_frp_si,
         self.local_network.frp_c_target: batch_frp_c,
@@ -448,9 +448,10 @@ class Trainer(object):
 
     if next_frame and self.use_autoencoder:
       ae_feed_dict = {
-        self.local_network.ground_truth: next_frame
+        self.local_network.ground_truth: np.expand_dims(next_frame.state, axis=0)
       }
       feed_dict.update(ae_feed_dict)
+
     # Calculate gradients and copy them to global network.
     sess.run( self.apply_gradients, feed_dict=feed_dict )
     

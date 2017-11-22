@@ -412,7 +412,7 @@ class UnrealModel(object):
     frp_loss = -tf.reduce_sum(self.frp_c_target * tf.log(frp_c))
     return frp_loss
     
-  def _decoder_loss(self, lamb):
+  def _decoder_loss(self, lamb=0.01):
     self.ground_truth = tf.placeholder("float", [1, 84, 84, 3])
     var_collections = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, scope='decoder_network')
     for var in var_collections:
