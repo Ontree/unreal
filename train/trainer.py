@@ -312,32 +312,8 @@ class Trainer(object):
 
     return batch_vr_si, batch_vr_last_action_reward, batch_vr_R
 
-  
+  '''
   def _process_rp(self):
-    # [Reward prediction]
-    rp_experience_frames, _, _ = self.experience.sample_rp_sequence()
-    # 4 frames
-
-    batch_rp_si = []
-    batch_rp_c = []
-    
-    for i in range(4):
-      batch_rp_si.append(rp_experience_frames[i].state)
-
-    # one hot vector for target reward
-    r = rp_experience_frames[3].raw_reward
-    rp_c = [0.0, 0.0, 0.0]
-    if r == 0:
-      rp_c[0] = 1.0 # zero
-    elif r > 0:
-      rp_c[1] = 1.0 # positive
-    else:
-      rp_c[2] = 1.0 # negative
-    batch_rp_c.append(rp_c)
-    return batch_rp_si, batch_rp_c
-
-
-  def _process_frp(self):
     # [Reward prediction]
     rp_experience_frames, total_raw_reward, _ = self.experience.sample_rp_sequence()
     # 4 frames
@@ -358,13 +334,41 @@ class Trainer(object):
     else:
       rp_c[2] = 1.0 # negative
     batch_rp_c.append(rp_c)
+    return batch_rp_si, batch_rp_c
+  '''
 
-    batch_rp_action = []
-    action_index = rp_experience_frames[3].action
-    action_one_hot = np.zeros([self.action_size])
-    action_one_hot[action_index] = 1.0
-    batch_rp_action.append(action_one_hot)
-    return batch_rp_si, batch_rp_c, batch_rp_action
+  def _process_replay(self, action=False):
+    # [Reward prediction]
+    rp_experience_frames, total_raw_reward, next_frame = self.experience.sample_rp_sequence()
+    # 4 frames
+
+    batch_rp_si = []
+    batch_rp_c = []
+    
+    for i in range(4):
+      batch_rp_si.append(rp_experience_frames[i].state)
+
+    # one hot vector for target reward
+    r = total_raw_reward
+    rp_c = [0.0, 0.0, 0.0]
+    if r == 0:
+      rp_c[0] = 1.0 # zero
+    elif r > 0:
+      rp_c[1] = 1.0 # positive
+    else:
+      rp_c[2] = 1.0 # negative
+    batch_rp_c.append(rp_c)
+
+    result = [batch_rp_si, batch_rp_c, next_frame]
+
+    if action:
+      batch_rp_action = []
+      action_index = rp_experience_frames[3].action
+      action_one_hot = np.zeros([self.action_size])
+      action_one_hot[action_index] = 1.0
+      batch_rp_action.append(action_one_hot)
+      result.append(batch_rp_action)
+    return result
   
   
   def process(self, sess, global_t, summary_writer, summary_op, score_input):
@@ -424,7 +428,7 @@ class Trainer(object):
     # [Reward prediction]
     next_frame = None
     if self.use_reward_prediction:
-      batch_rp_si, batch_rp_c, _ = self._process_rp()
+      batch_rp_si, batch_rp_c, _ = self._process_replay()
       rp_feed_dict = {
         self.local_network.rp_input: batch_rp_si,
         self.local_network.rp_c_target: batch_rp_c
@@ -433,7 +437,8 @@ class Trainer(object):
     
     # [Future reward prediction]
     if self.use_future_reward_prediction:
-      batch_frp_si, batch_frp_c, batch_frp_action, _ = self._process_frp()
+
+      batch_frp_si, batch_frp_c, _, batch_frp_action = self._process_replay(action=True)
       frp_feed_dict = {
         self.local_network.frp_input: batch_frp_si,
         self.local_network.frp_c_target: batch_frp_c,
