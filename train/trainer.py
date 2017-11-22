@@ -60,6 +60,7 @@ class Trainer(object):
                                      use_value_replay,
                                      use_reward_prediction,
                                      use_future_reward_prediction,
+                                     use_autoencoder,
                                      pixel_change_lambda,
                                      entropy_beta,
                                      device)
