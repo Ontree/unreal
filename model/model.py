@@ -5,7 +5,7 @@ from __future__ import print_function
 
 import tensorflow as tf
 import numpy as np
-
+from model.tf_ops import ReLu, Deconv2D, FC
 
 # weight initialization based on muupan's code
 # https://github.com/muupan/async-rl/blob/master/a3c_ale.py
@@ -175,6 +175,19 @@ class UnrealModel(object):
       v_ = tf.matmul(lstm_outputs, W_fc_v) + b_fc_v
       base_v = tf.reshape( v_, [-1] )
       return base_v
+
+  def _create_decoder_network(self, encoder_input, reuse=False, num_channel=3):
+    batch_size = tf.shape(encoder_input)[0]
+    with tf.variable_scope("decoder_network", reuse=reuse) as scope:
+      l = FC(encoder_input, 1024, 'dec')
+      l = FC(l, 64 * 10 * 10, 'ip4')
+      l = ReLu(l, 'relu1')
+      l = tf.reshape(l, [-1, 10, 10, 64], name='dec-reshape')
+      l = Deconv2D(l, [6, 6], [batch_size, 20, 20, 64], 64, 2, 'SAME', 'deconv2')
+      l = ReLu(l, 'relu2')
+      l = Deconv2D(l, [6, 6], [batch_size, 40, 40, 64], 64, 2, 'SAME', 'deconv3')
+      l = ReLu(l, 'relu3')
+      self.encoder_output = Deconv2D(l, [6, 6], [batch_size, 84, 84, num_channel], num_channel, 2, 'VALID', 'x_hat-05')
 
 
   def _create_pc_network(self):
@@ -372,7 +385,16 @@ class UnrealModel(object):
     frp_loss = -tf.reduce_sum(self.frp_c_target * tf.log(frp_c))
     return frp_loss
     
-    
+  def _decoder_loss(self, ground_truth, lamb):
+    var_collections = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, scope='decoder_network')
+    for var in var_collections:
+      print(var.name)
+    penalty = tf.reduce_sum(lamb * tf.stack([tf.nn.l2_loss(var) for var in var_collections]),
+                            name='regularization')
+    decoder_loss = tf.reduce_mean(tf.nn.l2_loss(self.encoder_output - ground_truth, name = 'l2 loss'))
+    return decoder_loss
+
+
   def prepare_loss(self):
     with tf.device(self._device):
       loss = self._base_loss()
