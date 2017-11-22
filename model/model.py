@@ -59,6 +59,7 @@ class UnrealModel(object):
     
   def _create_network(self, for_display):
     scope_name = "net_{0}".format(self._thread_index)
+    self.scope_name = scope_name
     with tf.device(self._device), tf.variable_scope(scope_name) as scope:
       # lstm
       self.lstm_cell = tf.nn.rnn_cell.BasicLSTMCell(256, state_is_tuple=True)
@@ -416,12 +417,12 @@ class UnrealModel(object):
     
   def _decoder_loss(self, lamb=0.01):
     self.ground_truth = tf.placeholder("float", [1, 84, 84, 3])
-    var_collections = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, scope='decoder_network')
+    var_collections = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, scope=self.scope_name+':decoder_network')
     for var in var_collections:
       print(var.name)
     penalty = tf.reduce_sum(lamb * tf.stack([tf.nn.l2_loss(var) for var in var_collections]),
                             name='regularization')
-    decoder_loss = tf.reduce_mean(tf.nn.l2_loss(self.encoder_output - self.ground_truth, name = 'l2 loss')+penalty)
+    decoder_loss = tf.reduce_mean(tf.nn.l2_loss(self.encoder_output - self.ground_truth, name = 'l2_loss')+penalty)
     return decoder_loss
 
 
