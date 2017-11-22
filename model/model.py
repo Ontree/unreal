@@ -39,6 +39,7 @@ class UnrealModel(object):
                use_value_replay,
                use_reward_prediction,
                use_future_reward_prediction,
+               use_autoencoder,
                pixel_change_lambda,
                entropy_beta,
                device,
@@ -49,6 +50,7 @@ class UnrealModel(object):
     self._use_pixel_change = use_pixel_change
     self._use_value_replay = use_value_replay
     self._use_reward_prediction = use_reward_prediction
+    self._use_autoencoder = use_autoencoder
     self._pixel_change_lambda = pixel_change_lambda
     self._entropy_beta = entropy_beta
     self._use_future_reward_prediction = use_future_reward_prediction
@@ -81,7 +83,11 @@ class UnrealModel(object):
       # [Future reward prediction network]
       if self._use_future_reward_prediction:
         self._create_frp_network()
-      
+      if self._use_autoencoder:
+        if self._use_reward_prediction:
+          self._create_decoder_network(self.rp_conv_output_reshaped, True, 3)
+        elif self._use_future_reward_prediction:
+          self._create_decoder_network(self.future_feature, True, 3)
       self.reset_state()
 
       self.variables = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, scope=scope_name)
@@ -435,7 +441,11 @@ class UnrealModel(object):
       if self._use_future_reward_prediction:
         frp_loss = self._frp_loss()
         loss = loss + frp_loss
-      
+
+      if self._use_autoencoder:
+        ae_loss = self._decoder_loss(None, 0.01)
+        loss = loss + ae_loss
+
       self.total_loss = loss
 
 
