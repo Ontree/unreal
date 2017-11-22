@@ -438,7 +438,6 @@ class Trainer(object):
     
     # [Future reward prediction]
     if self.use_future_reward_prediction:
-
       batch_frp_si, batch_frp_c, next_frame, batch_frp_action = self._process_replay(action=True)
       frp_feed_dict = {
         self.local_network.frp_input: batch_frp_si,

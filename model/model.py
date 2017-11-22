@@ -85,9 +85,9 @@ class UnrealModel(object):
         self._create_frp_network()
       if self._use_autoencoder:
         if self._use_reward_prediction:
-          self._create_decoder_network(self.rp_conv_output_reshaped, True, 3)
+          self._create_decoder_network(self.rp_conv_output_reshaped, False, 3)
         elif self._use_future_reward_prediction:
-          self._create_decoder_network(self.future_feature, True, 3)
+          self._create_decoder_network(self.future_feature, False, 3)
       self.reset_state()
 
       self.variables = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, scope=scope_name)
@@ -444,7 +444,7 @@ class UnrealModel(object):
         loss = loss + frp_loss
 
       if self._use_autoencoder:
-        ae_loss = self._decoder_loss(None, 0.01)
+        ae_loss = self._decoder_loss(0.01)
         loss = loss + ae_loss
 
       self.total_loss = loss
