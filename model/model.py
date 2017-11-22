@@ -412,13 +412,14 @@ class UnrealModel(object):
     frp_loss = -tf.reduce_sum(self.frp_c_target * tf.log(frp_c))
     return frp_loss
     
-  def _decoder_loss(self, ground_truth, lamb):
+  def _decoder_loss(self, lamb):
+    self.ground_truth = tf.placeholder("float", [1, 84, 84, 3])
     var_collections = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, scope='decoder_network')
     for var in var_collections:
       print(var.name)
     penalty = tf.reduce_sum(lamb * tf.stack([tf.nn.l2_loss(var) for var in var_collections]),
                             name='regularization')
-    decoder_loss = tf.reduce_mean(tf.nn.l2_loss(self.encoder_output - ground_truth, name = 'l2 loss'))
+    decoder_loss = tf.reduce_mean(tf.nn.l2_loss(self.encoder_output - self.ground_truth, name = 'l2 loss')+penalty)
     return decoder_loss
 
 
