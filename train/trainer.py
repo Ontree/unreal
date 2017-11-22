@@ -313,7 +313,7 @@ class Trainer(object):
   
   def _process_rp(self):
     # [Reward prediction]
-    rp_experience_frames = self.experience.sample_rp_sequence()
+    rp_experience_frames, _, _ = self.experience.sample_rp_sequence()
     # 4 frames
 
     batch_rp_si = []
@@ -337,7 +337,7 @@ class Trainer(object):
 
   def _process_frp(self):
     # [Reward prediction]
-    rp_experience_frames = self.experience.sample_rp_sequence()
+    rp_experience_frames, total_raw_reward, _ = self.experience.sample_rp_sequence()
     # 4 frames
 
     batch_rp_si = []
@@ -347,7 +347,7 @@ class Trainer(object):
       batch_rp_si.append(rp_experience_frames[i].state)
 
     # one hot vector for target reward
-    r = rp_experience_frames[3].raw_reward
+    r = total_raw_reward
     rp_c = [0.0, 0.0, 0.0]
     if r == 0:
       rp_c[0] = 1.0 # zero
