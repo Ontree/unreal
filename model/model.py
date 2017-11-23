@@ -417,7 +417,7 @@ class UnrealModel(object):
     
   def _decoder_loss(self, lamb=0.01):
     self.ground_truth = tf.placeholder("float", [1, 84, 84, 3])
-    var_collections = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, scope=self.scope_name+':decoder_network')
+    var_collections = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, scope=self.scope_name+'/decoder_network')
     for var in var_collections:
       print(var.name)
     penalty = tf.reduce_sum(lamb * tf.stack([tf.nn.l2_loss(var) for var in var_collections]),

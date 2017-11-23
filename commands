@@ -1,1 +1,11 @@
-python3 main.py  --use_reward_prediction --use_autoencoder --reward_length=5 --env_name=Seaquest-v0 --hdd=5 --name=ae_test
+python3 main.py  --use_reward_prediction --reward_length=5 --use_autoencoder --env_name=Seaquest-v0 --hdd=5 --name=Seaquest_sr_5_ae
+python3 main.py  --use_future_reward_prediction --use_autoencoder --reward_length=5 --env_name=Seaquest-v0 --hdd=5 --name=Seaquest_fsr_5_ae
+python3 main.py --name=Seaquest_fsr_5 --env_name=Seaquest-v0 --hdd=5 --use_future_reward_prediction --reward_length=5
+python3 main.py  --use_reward_prediction --reward_length=5 --env_name=Seaquest-v0 --hdd=5 --name=Seaquest_sr
+python3 main.py --name=Seaquest_ori --hdd=5 --env_name=Seaquest-v0
+
+python3 main.py  --use_future_reward_prediction --use_autoencoder --reward_length=5 --env_name=ChopperCommand-v0
+ --hdd=5 --name=ChopperCommand_fsr_5_ae
+python3 main.py --name=ChopperCommand_ori --hdd=5 --env_name=ChopperCommand-v0
+python3 main.py  --use_future_reward_prediction --use_autoencoder --reward_length=5 --env_name=ChopperCommand-v0 --hdd=5 --name=ChopperCommand_fsr_5
+
