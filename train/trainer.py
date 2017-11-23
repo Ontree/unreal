@@ -472,7 +472,7 @@ class Trainer(object):
         current_res['target_reward'] = batch_frp_c
         current_res['action'] = batch_frp_action
       current_res['next_frame_prediction'] = predicted_frame
-      if os.path.exists(self.prediction_res_file):
+      if os.path.exists(self.prediction_res_file) and os.path.getsize(self.prediction_res_file) > 0:
         with open(self.prediction_res_file, 'rb') as f:
           res = pickle.load(f)
       else:
