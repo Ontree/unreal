@@ -461,7 +461,7 @@ class Trainer(object):
     sess.run( self.apply_gradients, feed_dict=feed_dict)
 
 
-    if self.use_autoencoder and global_t % 10 == 0:
+    if self.use_autoencoder and global_t % 1000 == 0:
       predicted_frame = sess.run(self.local_network.encoder_output, feed_dict=feed_dict)
       current_res = {'next_frame_ground_truth': next_frame}
       if self.use_reward_prediction:
