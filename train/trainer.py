@@ -479,7 +479,7 @@ class Trainer(object):
         res = []
       res.append(current_res)
       with open(self.prediction_res_file, 'wb') as f:
-        res = pickle.dump(f)
+        pickle.dump(res, f)
 
     self._print_log(global_t)
     
