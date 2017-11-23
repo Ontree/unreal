@@ -9,6 +9,8 @@ import time
 from environment.environment import Environment
 from model.model import UnrealModel
 from train.experience import Experience, ExperienceFrame
+import pickle
+import os.path
 
 LOG_INTERVAL = 100
 PERFORMANCE_LOG_INTERVAL = 1000
@@ -36,7 +38,8 @@ class Trainer(object):
                gamma_pc,
                experience_history_size,
                max_global_time_step,
-               device):
+               device,
+               log_file):
 
     self.thread_index = thread_index
     self.learning_rate_input = learning_rate_input
@@ -77,6 +80,8 @@ class Trainer(object):
     self.episode_reward = 0
     # For log output
     self.prev_local_t = 0
+    self.log_file = log_file
+    self.prediction_res_file = log_file + '/' + 'res.pkl'
 
   def prepare(self):
     self.environment = Environment.create_environment(self.env_type,
@@ -453,8 +458,29 @@ class Trainer(object):
       feed_dict.update(ae_feed_dict)
 
     # Calculate gradients and copy them to global network.
-    sess.run( self.apply_gradients, feed_dict=feed_dict )
-    
+    sess.run( self.apply_gradients, feed_dict=feed_dict)
+
+
+    if self.use_autoencoder and global_t % 100000 == 0:
+      predicted_frame = sess.run(self.local_network.encoder_output, feed_dict=feed_dict)
+      current_res = {'next_frame_ground_truth': next_frame, 'step': global_t}
+      if self.use_reward_prediction:
+        current_res['states'] = batch_rp_si
+        current_res['target_reward'] = batch_rp_c
+      elif self.use_future_reward_prediction:
+        current_res['states'] = batch_frp_si
+        current_res['target_reward'] = batch_frp_c
+        current_res['action'] = batch_frp_action
+      current_res['next_frame_prediction'] = predicted_frame
+      if os.path.exists(self.prediction_res_file) and os.path.getsize(self.prediction_res_file) > 0:
+        with open(self.prediction_res_file, 'rb') as f:
+          res = pickle.load(f)
+      else:
+        res = []
+      res.append(current_res)
+      with open(self.prediction_res_file, 'wb') as f:
+        pickle.dump(res, f)
+
     self._print_log(global_t)
     
     # Return advanced local step size

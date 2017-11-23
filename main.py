@@ -124,7 +124,8 @@ class Application(object):
                         flags.gamma_pc,
                         flags.experience_history_size,
                         flags.max_time_step,
-                        device)
+                        device,
+                        flags.log_file)
       self.trainers.append(trainer)
     
     # prepare session
