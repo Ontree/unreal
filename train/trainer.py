@@ -461,9 +461,9 @@ class Trainer(object):
     sess.run( self.apply_gradients, feed_dict=feed_dict)
 
 
-    if self.use_autoencoder and global_t % 1000 == 0:
+    if self.use_autoencoder and global_t % 100000 == 0:
       predicted_frame = sess.run(self.local_network.encoder_output, feed_dict=feed_dict)
-      current_res = {'next_frame_ground_truth': next_frame}
+      current_res = {'next_frame_ground_truth': next_frame, 'step': global_t}
       if self.use_reward_prediction:
         current_res['states'] = batch_rp_si
         current_res['target_reward'] = batch_rp_c
