@@ -82,7 +82,6 @@ class Trainer(object):
     self.prev_local_t = 0
     self.log_file = log_file
     self.prediction_res_file = log_file + '/' + 'res.pkl'
-    self.global_network = global_network
 
   def prepare(self):
     self.environment = Environment.create_environment(self.env_type,
@@ -460,8 +459,10 @@ class Trainer(object):
 
     # Calculate gradients and copy them to global network.
     sess.run( self.apply_gradients, feed_dict=feed_dict)
+
+
     if self.use_autoencoder and global_t % 10 == 0:
-      predicted_frame = sess.run(self.global_network.encoder_output, feed_dict=feed_dict)
+      predicted_frame = sess.run(self.local_network.encoder_output, feed_dict=feed_dict)
       current_res = {'next_frame_ground_truth': next_frame}
       if self.use_reward_prediction:
         current_res['states'] = batch_rp_si
