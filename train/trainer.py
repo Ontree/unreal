@@ -460,7 +460,7 @@ class Trainer(object):
     # Calculate gradients and copy them to global network.
     sess.run( self.apply_gradients, feed_dict=feed_dict)
     if self.use_autoencoder and global_t % 10 == 0:
-      predicted_frame = sess.run(self.encoder_output, feed_dict=feed_dict)
+      predicted_frame = sess.run(global_network.encoder_output, feed_dict=feed_dict)
       current_res = {'next_frame_ground_truth': next_frame}
       if self.use_reward_prediction:
         current_res['states'] = batch_rp_si
