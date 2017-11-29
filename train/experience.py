@@ -129,11 +129,11 @@ class Experience(object):
       from_zero = True
     end_frame_index = None
     if from_zero:
-      while not end_frame_index or end_frame_index + (self._reward_length - 1) - self._top_frame_index >= len(self._frames):
+      while not end_frame_index or not end_frame_index-3-self._top_frame_index >= 0 or end_frame_index + (self._reward_length - 1) - self._top_frame_index >= len(self._frames) - 1:
         index = np.random.randint(len(self._zero_reward_indices))
         end_frame_index = self._zero_reward_indices[index]
     else:
-      while not end_frame_index or not end_frame_index-3-self._top_frame_index >= 0 or end_frame_index + (self._reward_length - 1) - self._top_frame_index >= len(self._frames):
+      while not end_frame_index or not end_frame_index-3-self._top_frame_index >= 0 or end_frame_index + (self._reward_length - 1) - self._top_frame_index >= len(self._frames) - 1:
           index = np.random.randint(len(self._non_zero_reward_indices))
           end_frame_index = self._non_zero_reward_indices[index]
           end_frame_index = random.randrange(end_frame_index-(self._reward_length - 1), end_frame_index+1)
@@ -151,8 +151,7 @@ class Experience(object):
     for i in range(self._reward_length):
       total_raw_reward += self._frames[raw_start_frame_index+3+i].raw_reward
 
-    next_frame = None
-    if end_frame_index - self._top_frame_index + 1 < len(self._frames):
-      next_frame = self._frames[raw_start_frame_index+4]
+    #assert end_frame_index - self._top_frame_index + 1 < len(self._frames)
+    next_frame = self._frames[raw_start_frame_index+4]
 
     return sampled_frames, total_raw_reward, next_frame
