@@ -13,6 +13,7 @@ def get_options(option_type):
   """
   # Common
   tf.app.flags.DEFINE_string("env_type", "gym", "environment type (lab or gym or maze)")
+  tf.app.flags.DEFINE_integer("skip_step", 4, "skip frame steps in gym environment")
   tf.app.flags.DEFINE_string("env_name", "Pong-v0",  "environment name")
   tf.app.flags.DEFINE_boolean("use_pixel_change", False, "whether to use pixel change")
   tf.app.flags.DEFINE_boolean("use_value_replay", False, "whether to use value function replay")

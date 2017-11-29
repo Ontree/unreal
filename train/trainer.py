@@ -39,7 +39,8 @@ class Trainer(object):
                experience_history_size,
                max_global_time_step,
                device,
-               log_file):
+               log_file,
+               skip_step):
 
     self.thread_index = thread_index
     self.learning_rate_input = learning_rate_input
@@ -55,6 +56,7 @@ class Trainer(object):
     self.gamma_pc = gamma_pc
     self.experience_history_size = experience_history_size
     self.max_global_time_step = max_global_time_step
+    self.skip_step = skip_step
     self.action_size = Environment.get_action_size(env_type, env_name)
     
     self.local_network = UnrealModel(self.action_size,
@@ -85,7 +87,7 @@ class Trainer(object):
 
   def prepare(self):
     self.environment = Environment.create_environment(self.env_type,
-                                                      self.env_name)
+                                                      self.env_name, self.skip_step)
 
   def stop(self):
     self.environment.stop()
