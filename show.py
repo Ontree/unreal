@@ -12,6 +12,7 @@ from train.experience import Experience, ExperienceFrame
 import pickle
 import os.path
 from options import get_options
+import tensorflow as tf
 
 flags = get_options("show")
 
@@ -38,6 +39,12 @@ class Agent(object):
     self.use_autoencoder = use_autoencoder
     self.skip_step = skip_step
     self.action_size = Environment.get_action_size(env_type, env_name)
+    config = tf.ConfigProto(log_device_placement=False,
+                            allow_soft_placement=True)
+    config.gpu_options.allow_growth = True
+    sess = tf.Session(config=config)
+    init = tf.global_variables_initializer()
+    sess.run(init)
     self.network = UnrealModel(self.action_size,
                                      -1,
                                      use_pixel_change,
@@ -49,7 +56,13 @@ class Agent(object):
                                      entropy_beta,
                                      device)
     self.network.prepare_loss()
-
+    saver = tf.train.Saver()
+    checkpoint = tf.train.get_checkpoint_state(flags.checkpoint_dir)
+    if checkpoint and checkpoint.model_checkpoint_path:
+        saver.restore(sess, checkpoint.model_checkpoint_path)
+        print("checkpoint loaded:", checkpoint.model_checkpoint_path)
+    else:
+        print("Could not find old checkpoint")
     #self.apply_gradients = grad_applier.minimize_local(self.network.total_loss,
     #                                                   global_network.get_vars(),
     #                                                   self.network.get_vars())
@@ -57,7 +70,6 @@ class Agent(object):
     #self.sync = self.network.sync_from(global_network)
     self.experience = Experience(10**4, reward_length)
     #self.local_t = 0
-    self.initial_learning_rate = initial_learning_rate
     self.episode_reward = 0
     # For log output
     #self.prev_local_t = 0
@@ -141,8 +153,6 @@ class Agent(object):
 
 def __main__():
   device = "/cpu:0"
-  if USE_GPU:
-    device = "/gpu:0"
   agent = Agent((flags.env_type,
                 flags.env_name,
                 flags.use_pixel_change,
