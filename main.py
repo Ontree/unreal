@@ -125,7 +125,8 @@ class Application(object):
                         flags.experience_history_size,
                         flags.max_time_step,
                         device,
-                        flags.log_file)
+                        flags.log_file,
+                        flags.skip_step)
       self.trainers.append(trainer)
     
     # prepare session

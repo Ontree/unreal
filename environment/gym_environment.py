@@ -22,7 +22,7 @@ def preprocess_frame(observation):
   resized_observation = resized_observation / 255.0
   return resized_observation
 
-def worker(conn, env_name):
+def worker(conn, env_name, skip_step):
   env = gym.make(env_name)
   env.reset()
   conn.send(0)
@@ -36,7 +36,7 @@ def worker(conn, env_name):
       conn.send(state)
     elif command == COMMAND_ACTION:
       reward = 0
-      for i in range(4):
+      for i in range(skip_step):
         obs, r, terminal, _ = env.step(arg)
         reward += r
         if terminal:
@@ -60,11 +60,11 @@ class GymEnvironment(environment.Environment):
     env.close()
     return action_size
   
-  def __init__(self, env_name):
+  def __init__(self, env_name, skip_step):
     environment.Environment.__init__(self)
 
     self.conn, child_conn = Pipe()
-    self.proc = Process(target=worker, args=(child_conn, env_name))
+    self.proc = Process(target=worker, args=(child_conn, env_name, skip_step))
     self.proc.start()
     self.conn.recv()
     self.reset()
