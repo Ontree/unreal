@@ -28,7 +28,10 @@ def get_prediction(history, action, env_name, check_dir):
                                      .0,
                                      .0,
                                      "/cpu:0")
-    sess = tf.session()
+    config = tf.ConfigProto(log_device_placement=False,
+                            allow_soft_placement=True)
+    config.gpu_options.allow_growth = True
+    sess = tf.Session(config=config)
     init = tf.global_variables_initializer()
     sess.run(init)
 
