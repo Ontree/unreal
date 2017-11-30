@@ -22,7 +22,7 @@ def preprocess_frame(observation):
   resized_observation = resized_observation / 255.0
   return resized_observation
 
-def worker(conn, env_name, skip_step):
+def worker(conn, env_name, skip_step, keep_raw_img):
   env = gym.make(env_name)
   env.reset()
   conn.send(0)
@@ -42,7 +42,10 @@ def worker(conn, env_name, skip_step):
         if terminal:
           break
       state = preprocess_frame(obs)
-      conn.send([state, reward, terminal])
+      if keep_raw_img:
+        conn.send([state, reward, terminal, obs])
+      else:
+        conn.send([state, reward, terminal])
     elif command == COMMAND_TERMINATE:
       break
     else:
@@ -60,11 +63,12 @@ class GymEnvironment(environment.Environment):
     env.close()
     return action_size
   
-  def __init__(self, env_name, skip_step):
+  def __init__(self, env_name, skip_step, keep_raw_img):
     environment.Environment.__init__(self)
 
     self.conn, child_conn = Pipe()
-    self.proc = Process(target=worker, args=(child_conn, env_name, skip_step))
+    self.keep_raw_img = keep_raw_img
+    self.proc = Process(target=worker, args=(child_conn, env_name, skip_step, keep_raw_img))
     self.proc.start()
     self.conn.recv()
     self.reset()
@@ -85,10 +89,14 @@ class GymEnvironment(environment.Environment):
 
   def process(self, action):
     self.conn.send([COMMAND_ACTION, action])
-    state, reward, terminal = self.conn.recv()
-    
+    if self.keep_raw_img:
+      state, reward, terminal, raw_img = self.conn.recv()
+      res = (state, reward, terminal, pixel_change, raw_img)
+    else:
+      state, reward, terminal= self.conn.recv()
+      res = (state, reward, terminal, pixel_change)
     pixel_change = self._calc_pixel_change(state, self.last_state)
     self.last_state = state
     self.last_action = action
     self.last_reward = reward
-    return state, reward, terminal, pixel_change
+    return res

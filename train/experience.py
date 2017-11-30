@@ -9,8 +9,9 @@ import random
 
 
 class ExperienceFrame(object):
-  def __init__(self, state, reward, action, terminal, pixel_change, last_action, last_reward):
+  def __init__(self, state, reward, action, terminal, pixel_change, last_action, last_reward, raw_img=None):
     self.state = state
+    self.raw_img = raw_img
     self.action = action # (Taken action with the 'state')
     self.raw_reward = reward
     self.reward = np.clip(reward, -1, 1) # Reward with the 'state'. (Clipped)

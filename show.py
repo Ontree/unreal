@@ -38,7 +38,7 @@ class Agent(object):
     self.use_future_reward_prediction = use_future_reward_prediction
     self.use_autoencoder = use_autoencoder
     self.skip_step = skip_step
-    self.action_size = Environment.get_action_size(env_type, env_name)
+    self.action_size = Environment.get_action_size(env_type, env_name, keep_raw_img=True)
     config = tf.ConfigProto(log_device_placement=False,
                             allow_soft_placement=True)
     config.gpu_options.allow_growth = True
@@ -125,9 +125,9 @@ class Agent(object):
         prev_state = self.environment.last_state
 
         # Process game
-        new_state, reward, terminal, pixel_change = self.environment.process(action)
+        new_state, reward, terminal, pixel_change, raw_img = self.environment.process(action)
         frame = ExperienceFrame(prev_state, reward, action, terminal, pixel_change,
-                                last_action, last_reward)
+                                last_action, last_reward, raw_img=raw_img)
 
         # Store to experience
         self.experience.add_frame(frame)
