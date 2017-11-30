@@ -3,7 +3,6 @@ from __future__ import division
 from __future__ import print_function
 
 import tensorflow as tf
-import matplotlib.pyplot as plt
 import numpy as np
 from environment.environment import Environment
 from model.model import UnrealModel
@@ -43,9 +42,9 @@ def get_prediction(history, action, env_name, check_dir):
     else:
         print("Could not find old checkpoint")
 
-    feed_dict = {global_network.frp_input:np.zeros((4,83,83,3)), global_network.frp_action_input:np.zeros((1,action_size))}
+    feed_dict = {global_network.frp_input:np.zeros((4,84,84,3)), global_network.frp_action_input:np.zeros((1,action_size))}
     encoder_output = sess.run(global_network.encoder_output, feed_dict)
     print(encoder_output)
 
 if __name__ == '__main__':
-    get_prediction(None, None, 'PongNoFrameskip-v0','/media/bighdd6/minghai1/capstone/results2/Pong_fsr_ae_l10/')
+    get_prediction(None, None, 'PongNoFrameskip-v0','/media/bighdd6/minghai1/capstone/results2/Pong_fsr_ae_l10/checkpoints')
