@@ -464,12 +464,13 @@ class Trainer(object):
 
 
     if self.use_autoencoder and global_t % 25000 == 0:
-      predicted_frame, predicted_reward = sess.run([self.local_network.encoder_output, self.local_network.frp_c], feed_dict=feed_dict)
       current_res = {'next_frame_ground_truth': next_frame, 'step': global_t}
       if self.use_reward_prediction:
+        predicted_frame, predicted_reward = sess.run([self.local_network.encoder_output, self.local_network.rp_c], feed_dict=feed_dict)
         current_res['states'] = batch_rp_si
         current_res['target_reward'] = batch_rp_c
       elif self.use_future_reward_prediction:
+        predicted_frame, predicted_reward = sess.run([self.local_network.encoder_output, self.local_network.frp_c], feed_dict=feed_dict)
         current_res['states'] = batch_frp_si
         current_res['target_reward'] = batch_frp_c
         current_res['action'] = batch_frp_action
