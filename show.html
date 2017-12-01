@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<!--<img src="ground/0.png" alt="ground_0" width="84" height="84">-->
+<h1>
+<script>
+	for(var j = 0; j < 20; j++)
+		document.write('&nbsp');
+	document.write('History')
+	for(var j = 0; j < 28; j++)
+		document.write('&nbsp');
+	document.write('Prediction')
+	for(var j = 0; j < 4; j++)
+		document.write('&nbsp');
+	document.write('Ground Truth')
+</script>
+</h1>
+<script>
+	var digit = [{'pre_reward': 2, 'ground_truth_last_act': 0, 'action': 0, 'true_reward': 0, 'step': 0}, {'pre_reward': 2, 'ground_truth_last_act': 3, 'action': 3, 'true_reward': 1, 'step': 0}, {'pre_reward': 1, 'ground_truth_last_act': 7, 'action': 7, 'true_reward': 0, 'step': 0}, {'pre_reward': 2, 'ground_truth_last_act': 0, 'action': 0, 'true_reward': 1, 'step': 0}, {'pre_reward': 1, 'ground_truth_last_act': 2, 'action': 2, 'true_reward': 1, 'step': 0}, {'pre_reward': 1, 'ground_truth_last_act': 7, 'action': 7, 'true_reward': 0, 'step': 0}, {'pre_reward': 1, 'ground_truth_last_act': 1, 'action': 1, 'true_reward': 1, 'step': 475000}, {'pre_reward': 1, 'ground_truth_last_act': 8, 'action': 8, 'true_reward': 1, 'step': 700000}, {'pre_reward': 0, 'ground_truth_last_act': 6, 'action': 6, 'true_reward': 0, 'step': 1625000}, {'pre_reward': 1, 'ground_truth_last_act': 0, 'action': 0, 'true_reward': 0, 'step': 2050000}, {'pre_reward': 1, 'ground_truth_last_act': 8, 'action': 8, 'true_reward': 1, 'step': 2700000}, {'pre_reward': 1, 'ground_truth_last_act': 6, 'action': 6, 'true_reward': 0, 'step': 3275000}, {'pre_reward': 0, 'ground_truth_last_act': 5, 'action': 5, 'true_reward': 0, 'step': 3450000}, {'pre_reward': 1, 'ground_truth_last_act': 2, 'action': 2, 'true_reward': 1, 'step': 3875000}, {'pre_reward': 1, 'ground_truth_last_act': 2, 'action': 2, 'true_reward': 1, 'step': 3900000}, {'pre_reward': 0, 'ground_truth_last_act': 1, 'action': 1, 'true_reward': 0, 'step': 4425000}, {'pre_reward': 0, 'ground_truth_last_act': 4, 'action': 4, 'true_reward': 0, 'step': 5225000}, {'pre_reward': 1, 'ground_truth_last_act': 6, 'action': 6, 'true_reward': 1, 'step': 5700000}, {'pre_reward': 1, 'ground_truth_last_act': 6, 'action': 6, 'true_reward': 0, 'step': 6525000}, {'pre_reward': 0, 'ground_truth_last_act': 6, 'action': 6, 'true_reward': 0, 'step': 6625000}, {'pre_reward': 1, 'ground_truth_last_act': 6, 'action': 6, 'true_reward': 1, 'step': 6700000}, {'pre_reward': 1, 'ground_truth_last_act': 4, 'action': 4, 'true_reward': 1, 'step': 7600000}, {'pre_reward': 1, 'ground_truth_last_act': 6, 'action': 6, 'true_reward': 1, 'step': 7650000}, {'pre_reward': 1, 'ground_truth_last_act': 5, 'action': 5, 'true_reward': 1, 'step': 8025000}, {'pre_reward': 0, 'ground_truth_last_act': 6, 'action': 6, 'true_reward': 0, 'step': 8075000}, {'pre_reward': 1, 'ground_truth_last_act': 0, 'action': 0, 'true_reward': 1, 'step': 8350000}, {'pre_reward': 1, 'ground_truth_last_act': 5, 'action': 5, 'true_reward': 1, 'step': 8525000}, {'pre_reward': 1, 'ground_truth_last_act': 5, 'action': 5, 'true_reward': 1, 'step': 8750000}, {'pre_reward': 1, 'ground_truth_last_act': 6, 'action': 6, 'true_reward': 1, 'step': 9650000}, {'pre_reward': 1, 'ground_truth_last_act': 5, 'action': 5, 'true_reward': 1, 'step': 10175000}, {'pre_reward': 0, 'ground_truth_last_act': 6, 'action': 6, 'true_reward': 0, 'step': 10275000}, {'pre_reward': 1, 'ground_truth_last_act': 5, 'action': 5, 'true_reward': 1, 'step': 10450000}, {'pre_reward': 1, 'ground_truth_last_act': 4, 'action': 4, 'true_reward': 0, 'step': 10650000}, {'pre_reward': 1, 'ground_truth_last_act': 5, 'action': 5, 'true_reward': 0, 'step': 11100000}, {'pre_reward': 1, 'ground_truth_last_act': 5, 'action': 5, 'true_reward': 1, 'step': 11325000}, {'pre_reward': 0, 'ground_truth_last_act': 6, 'action': 6, 'true_reward': 1, 'step': 11400000}, {'pre_reward': 1, 'ground_truth_last_act': 6, 'action': 6, 'true_reward': 1, 'step': 11775000}, {'pre_reward': 1, 'ground_truth_last_act': 5, 'action': 5, 'true_reward': 1, 'step': 12650000}, {'pre_reward': 0, 'ground_truth_last_act': 5, 'action': 5, 'true_reward': 0, 'step': 13475000}, {'pre_reward': 1, 'ground_truth_last_act': 4, 'action': 4, 'true_reward': 1, 'step': 13625000}, {'pre_reward': 1, 'ground_truth_last_act': 6, 'action': 6, 'true_reward': 0, 'step': 15400000}, {'pre_reward': 1, 'ground_truth_last_act': 6, 'action': 6, 'true_reward': 1, 'step': 16000000}, {'pre_reward': 0, 'ground_truth_last_act': 5, 'action': 5, 'true_reward': 0, 'step': 16525000}, {'pre_reward': 1, 'ground_truth_last_act': 5, 'action': 5, 'true_reward': 0, 'step': 17475000}, {'pre_reward': 0, 'ground_truth_last_act': 6, 'action': 6, 'true_reward': 0, 'step': 19025000}, {'pre_reward': 1, 'ground_truth_last_act': 6, 'action': 6, 'true_reward': 1, 'step': 21250000}, {'pre_reward': 1, 'ground_truth_last_act': 6, 'action': 6, 'true_reward': 1, 'step': 21300000}, {'pre_reward': 1, 'ground_truth_last_act': 6, 'action': 6, 'true_reward': 1, 'step': 22000000}, {'pre_reward': 1, 'ground_truth_last_act': 6, 'action': 6, 'true_reward': 1, 'step': 23550000}, {'pre_reward': 1, 'ground_truth_last_act': 4, 'action': 4, 'true_reward': 1, 'step': 23650000}, {'pre_reward': 0, 'ground_truth_last_act': 5, 'action': 5, 'true_reward': 1, 'step': 24325000}, {'pre_reward': 1, 'ground_truth_last_act': 5, 'action': 5, 'true_reward': 1, 'step': 24725000}, {'pre_reward': 1, 'ground_truth_last_act': 4, 'action': 4, 'true_reward': 1, 'step': 24825000}, {'pre_reward': 0, 'ground_truth_last_act': 5, 'action': 5, 'true_reward': 0, 'step': 24850000}, {'pre_reward': 1, 'ground_truth_last_act': 6, 'action': 6, 'true_reward': 1, 'step': 26150000}, {'pre_reward': 1, 'ground_truth_last_act': 5, 'action': 5, 'true_reward': 0, 'step': 26725000}, {'pre_reward': 1, 'ground_truth_last_act': 4, 'action': 4, 'true_reward': 1, 'step': 27650000}, {'pre_reward': 1, 'ground_truth_last_act': 6, 'action': 6, 'true_reward': 1, 'step': 27725000}, {'pre_reward': 1, 'ground_truth_last_act': 6, 'action': 6, 'true_reward': 1, 'step': 28150000}, {'pre_reward': 1, 'ground_truth_last_act': 6, 'action': 6, 'true_reward': 0, 'step': 28175000}, {'pre_reward': 1, 'ground_truth_last_act': 6, 'action': 6, 'true_reward': 1, 'step': 28600000}, {'pre_reward': 1, 'ground_truth_last_act': 6, 'action': 6, 'true_reward': 1, 'step': 28650000}, {'pre_reward': 0, 'ground_truth_last_act': 6, 'action': 6, 'true_reward': 0, 'step': 29350000}, {'pre_reward': 1, 'ground_truth_last_act': 6, 'action': 6, 'true_reward': 1, 'step': 30400000}, {'pre_reward': 0, 'ground_truth_last_act': 6, 'action': 6, 'true_reward': 0, 'step': 30600000}, {'pre_reward': 1, 'ground_truth_last_act': 6, 'action': 6, 'true_reward': 1, 'step': 30900000}, {'pre_reward': 1, 'ground_truth_last_act': 6, 'action': 6, 'true_reward': 0, 'step': 31200000}, {'pre_reward': 1, 'ground_truth_last_act': 6, 'action': 6, 'true_reward': 1, 'step': 31600000}]
+	
+	var reward_index = [0,1,-1]
+	
+	for(var j = 0; j < digit.length; j++){
+		var thisstep = digit[j]["step"]
+		document.write('Step ' + thisstep)
+		document.write('<div>');
+		for(var i = 0;i < 4; i++){
+			var k = j*4+i;
+			document.write('<img src="img/' + j + '_' + i + '.png" hspace="20"/>');
+		}
+		document.write('<img src="pre/' + j + '.png" hspace="120"/>');
+		document.write('<img src="ground/' + j + '.png" hspace="20"/>');
+		document.write('</div>');
+		
+		for(var i = 0; i < 128; i++)
+			document.write('&nbsp');
+		document.write("Pre Reward: " + reward_index[digit[j]["pre_reward"]]);
+		for(var i = 0; i < 18; i++)
+			document.write('&nbsp');
+		
+		document.write("Act: " + digit[j]["action"]);
+		for(var i = 0; i < 4; i++)
+			document.write('&nbsp');
+		document.write("True Reward: " + reward_index[digit[j]["true_reward"]]);
+		document.write('<br />');
+		document.write('<br />');
+	}
+		 
+</script>
+
+
+</body>
+</html>
