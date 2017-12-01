@@ -38,7 +38,7 @@ class Agent(object):
     self.use_future_reward_prediction = use_future_reward_prediction
     self.use_autoencoder = use_autoencoder
     self.skip_step = skip_step
-    self.action_size = Environment.get_action_size(env_type, env_name, keep_raw_img=True)
+    self.action_size = Environment.get_action_size(env_type, env_name)
     config = tf.ConfigProto(log_device_placement=False,
                             allow_soft_placement=True)
     config.gpu_options.allow_growth = True
@@ -76,7 +76,7 @@ class Agent(object):
     #self.log_file = log_file
     #self.prediction_res_file = log_file + '/' + 'res.pkl'
     self.environment = Environment.create_environment(self.env_type,
-                                                      self.env_name, self.skip_step)
+                                                      self.env_name, self.skip_step, keep_raw_img=True)
 
   def stop(self):
     self.environment.stop()
