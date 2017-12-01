@@ -151,6 +151,13 @@ class Agent(object):
           self.network.reset_state()
           break
 
+  def get_prediction(self, history, action):
+      action_size = Environment.get_action_size(self.env_type, self.env_name)
+      global_network = self.network
+      feed_dict = {global_network.frp_input: np.zeros((4, 84, 84, 3)),
+                   global_network.frp_action_input: np.zeros((1, action_size))} # fake frames and action input
+      encoder_output = self.sess.run(global_network.encoder_output, feed_dict)
+      print(encoder_output)
 
 if __name__ == '__main__':
   device = "/cpu:0"
