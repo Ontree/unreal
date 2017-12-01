@@ -119,10 +119,6 @@ class Agent(object):
         actions.append(action)
         values.append(value_)
 
-        if (self.thread_index == 0) and (self.local_t % LOG_INTERVAL == 0):
-          print("pi={}".format(pi_))
-          print(" V={}".format(value_))
-
         prev_state = self.environment.last_state
 
         # Process game
