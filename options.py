@@ -43,6 +43,8 @@ def get_options(option_type):
     tf.app.flags.DEFINE_integer("max_time_step", 100 * 10**7, "max time steps")
     tf.app.flags.DEFINE_integer("save_interval_step", 100 * 1000, "saving interval steps")
     tf.app.flags.DEFINE_boolean("grad_norm_clip", 40.0, "gradient norm clipping")
+    if tf.app.flags.FLAGS.log_file == '':
+      tf.app.flags.FLAGS.log_file = '/media/bighdd'+str(tf.app.flags.FLAGS.hdd)+'/minghai1/capstone/results2/' + tf.app.flags.FLAGS.name
   # For display
   if option_type == 'display':
     tf.app.flags.DEFINE_string("frame_save_dir", "/tmp/unreal_frames", "frame save directory")
@@ -52,6 +54,4 @@ def get_options(option_type):
   if tf.app.flags.FLAGS.checkpoint_dir == '':
     tf.app.flags.FLAGS.checkpoint_dir = '/media/bighdd'+str(tf.app.flags.FLAGS.hdd)+'/minghai1/capstone/results2/' + tf.app.flags.FLAGS.name + '/checkpoints'
 
-  if tf.app.flags.FLAGS.log_file == '':
-    tf.app.flags.FLAGS.log_file = '/media/bighdd'+str(tf.app.flags.FLAGS.hdd)+'/minghai1/capstone/results2/' + tf.app.flags.FLAGS.name
   return tf.app.flags.FLAGS
