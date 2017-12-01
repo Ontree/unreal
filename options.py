@@ -36,13 +36,13 @@ def get_options(option_type):
     tf.app.flags.DEFINE_float("initial_alpha_log_rate", 0.5, "log_uniform interpolate rate for learning rate")
     tf.app.flags.DEFINE_float("gamma", 0.99, "discount factor for rewards")
     tf.app.flags.DEFINE_float("gamma_pc", 0.9, "discount factor for pixel control")
-    tf.app.flags.DEFINE_float("entropy_beta", 0.001, "entropy regularization constant")
-    tf.app.flags.DEFINE_float("pixel_change_lambda", 0.05, "pixel change lambda") # 0.05, 0.01 ~ 0.1 for lab, 0.0001 ~ 0.01 for gym
     tf.app.flags.DEFINE_integer("experience_history_size", 2000, "experience replay buffer size")
     tf.app.flags.DEFINE_integer("max_time_step", 100 * 10**7, "max time steps")
     tf.app.flags.DEFINE_integer("save_interval_step", 100 * 1000, "saving interval steps")
     tf.app.flags.DEFINE_boolean("grad_norm_clip", 40.0, "gradient norm clipping")
 
+  tf.app.flags.DEFINE_float("entropy_beta", 0.001, "entropy regularization constant")
+  tf.app.flags.DEFINE_float("pixel_change_lambda", 0.05, "pixel change lambda") # 0.05, 0.01 ~ 0.1 for lab, 0.0001 ~ 0.01 for gym
   # For display
   if option_type == 'display':
     tf.app.flags.DEFINE_string("frame_save_dir", "/tmp/unreal_frames", "frame save directory")
