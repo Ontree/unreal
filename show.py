@@ -2,7 +2,7 @@
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
-
+from scipy.misc import toimage
 import numpy as np
 import time
 
@@ -170,21 +170,23 @@ if __name__ == '__main__':
   config = tf.ConfigProto(log_device_placement=False,
                             allow_soft_placement=True)
   config.gpu_options.allow_growth = True
-  agent._run_episode(1)
-#  with open('visualize_data/agent', 'w') as f:
-#    pickle.dump(agent.experience, f)
-  rp_experience_frames, total_raw_reward, next_frame = agent.experience.sample_rp_sequence()
-  history = []
-  for i in range(4):
-      history.append(rp_experience_frames[i].state)
-  action_one_hot = np.zeros((1,agent.action_size))
-  action_one_hot[0][rp_experience_frames[3].action] = 1
-  encoder_output = agent.get_prediction(history, action_one_hot)
-  print(encoder_output)
-  with open('visualize_data/test_encoder_output', 'wb') as f:
-      print('start dump')
-      pickle.dump(encoder_output, f)
-      print('end dump')
+  agent._run_episode(10)
+  with open('visualize_data/agent', 'wb') as f:
+    pickle.dump(agent.experience, f)
+  for j in range(10):
+      rp_experience_frames, _, _ = agent.experience.sample_rp_sequence()
+      history = []
+      for i in range(4):
+          history.append(rp_experience_frames[i].state)
+      for k in range(agent.action_size):
+          action_one_hot = np.zeros((1,agent.action_size))
+          action_one_hot[0][k] = 1
+          encoder_output = agent.get_prediction(history, action_one_hot)
+          print('start dump')
+          img = toimage(encoder_output[0])
+          img.save('image_data/sample_image_{0}_action_{1}.png'.format(j, k))
+          print('end dump')
+
   print('end of program')
   agent.environment.stop()
 
