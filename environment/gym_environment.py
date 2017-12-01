@@ -91,12 +91,13 @@ class GymEnvironment(environment.Environment):
     self.conn.send([COMMAND_ACTION, action])
     if self.keep_raw_img:
       state, reward, terminal, raw_img = self.conn.recv()
-      res = (state, reward, terminal, pixel_change, raw_img)
     else:
       state, reward, terminal= self.conn.recv()
-      res = (state, reward, terminal, pixel_change)
     pixel_change = self._calc_pixel_change(state, self.last_state)
     self.last_state = state
     self.last_action = action
     self.last_reward = reward
-    return res
+    if self.keep_raw_img:
+      return (state, reward, terminal, pixel_change, raw_img)
+    else:
+      return (state, reward, terminal, pixel_change)
