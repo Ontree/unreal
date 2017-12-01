@@ -11,6 +11,7 @@ from model.model import UnrealModel
 from train.experience import Experience, ExperienceFrame
 import pickle
 import os.path
+import cPickle as cp
 import tensorflow as tf
 from options import get_options
 
@@ -148,8 +149,8 @@ class Agent(object):
   def get_prediction(self, history, action):
       action_size = Environment.get_action_size(self.env_type, self.env_name)
       global_network = self.network
-      feed_dict = {global_network.frp_input: np.zeros((4, 84, 84, 3)),
-                   global_network.frp_action_input: np.zeros((1, action_size))} # fake frames and action input
+      feed_dict = {global_network.frp_input: history, #np.zeros((4, 84, 84, 3))
+                   global_network.frp_action_input: action} #np.zeros((1, action_size)) fake frames and action input
       encoder_output = self.sess.run(global_network.encoder_output, feed_dict)
       print(encoder_output)
 
@@ -170,8 +171,18 @@ if __name__ == '__main__':
   config = tf.ConfigProto(log_device_placement=False,
                             allow_soft_placement=True)
   config.gpu_options.allow_growth = True
-  agent._run_episode(10)
-
+  agent._run_episode(1)
+  with open('visualize_data/agent', 'w') as f:
+    cp.dump(agent, f)
+  rp_experience_frames, total_raw_reward, next_frame = agent.experience.sample_rp_sequence()
+  history = []
+  for i in range(4):
+      history.append(rp_experience_frames[i].state)
+  action_one_hot = np.zeros((1,agent.action_size))
+  action_one_hot[0][rp_experience_frames[3].action] = 1
+  encoder_output = agent.get_prediction(history, action_one_hot)
+  with open('visualize_data/test_encoder_output', 'w') as f:
+      cp.dump(encoder_output, f)
 
 
 
