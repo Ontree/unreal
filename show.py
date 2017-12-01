@@ -186,5 +186,6 @@ if __name__ == '__main__':
       pickle.dump(encoder_output, f)
       print('end dump')
   print('end of program')
+  agent.environment.stop()
 
   
