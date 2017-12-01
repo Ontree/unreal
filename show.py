@@ -11,7 +11,6 @@ from model.model import UnrealModel
 from train.experience import Experience, ExperienceFrame
 import pickle
 import os.path
-import cPickle as cp
 import tensorflow as tf
 from options import get_options
 
@@ -152,7 +151,7 @@ class Agent(object):
       feed_dict = {global_network.frp_input: history, #np.zeros((4, 84, 84, 3))
                    global_network.frp_action_input: action} #np.zeros((1, action_size)) fake frames and action input
       encoder_output = self.sess.run(global_network.encoder_output, feed_dict)
-      print(encoder_output)
+      return encoder_output
 
 if __name__ == '__main__':
   device = "/cpu:0"
@@ -172,8 +171,8 @@ if __name__ == '__main__':
                             allow_soft_placement=True)
   config.gpu_options.allow_growth = True
   agent._run_episode(1)
-  with open('visualize_data/agent', 'w') as f:
-    cp.dump(agent, f)
+#  with open('visualize_data/agent', 'w') as f:
+#    pickle.dump(agent.experience, f)
   rp_experience_frames, total_raw_reward, next_frame = agent.experience.sample_rp_sequence()
   history = []
   for i in range(4):
@@ -181,9 +180,11 @@ if __name__ == '__main__':
   action_one_hot = np.zeros((1,agent.action_size))
   action_one_hot[0][rp_experience_frames[3].action] = 1
   encoder_output = agent.get_prediction(history, action_one_hot)
-  with open('visualize_data/test_encoder_output', 'w') as f:
-      cp.dump(encoder_output, f)
-
-
+  print(encoder_output)
+  with open('visualize_data/test_encoder_output', 'wb') as f:
+      print('start dump')
+      pickle.dump(encoder_output, f)
+      print('end dump')
+  print('end of program')
 
   
