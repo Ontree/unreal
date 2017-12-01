@@ -165,6 +165,13 @@ def __main__():
                 flags.entropy_beta,
                 device,
                 flags.skip_step))
+  config = tf.ConfigProto(log_device_placement=False,
+                            allow_soft_placement=True)
+  config.gpu_options.allow_growth = True
+  sess = tf.Session(config=config)
+  agent._run_episode(sess, 1)
+  
+
 
 
   
