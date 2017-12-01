@@ -133,8 +133,6 @@ class Agent(object):
 
         rewards.append( reward )
 
-        self.local_t += 1
-
         if terminal:
           terminal_end = True
           print("score={}".format(self.episode_reward))
