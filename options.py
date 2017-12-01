@@ -23,11 +23,11 @@ def get_options(option_type):
   tf.app.flags.DEFINE_string("name", "tmp", "name used to store checkpoints and log")
   tf.app.flags.DEFINE_integer("reward_length", 1, "length of future reward for reward prediction")
   tf.app.flags.DEFINE_integer("hdd", 6, "hdd to store log")
-  tf.app.flags.DEFINE_string("checkpoint_dir", '/media/bighdd'+str(tf.app.flags.FLAGS.hdd)+'/minghai1/capstone/results2/' + tf.app.flags.FLAGS.name + '/checkpoints', "checkpoint directory")
-  
   # For training
   tf.app.flags.DEFINE_float("entropy_beta", 0.001, "entropy regularization constant")
   tf.app.flags.DEFINE_float("pixel_change_lambda", 0.05, "pixel change lambda") # 0.05, 0.01 ~ 0.1 for lab, 0.0001 ~ 0.01 for gym
+  tf.app.flags.DEFINE_string("checkpoint_dir", '/media/bighdd'+str(tf.app.flags.FLAGS.hdd)+'/minghai1/capstone/results2/' + tf.app.flags.FLAGS.name + '/checkpoints', "checkpoint directory")
+  
   if option_type == 'training':
     tf.app.flags.DEFINE_integer("parallel_size", 8, "parallel hread size")
     tf.app.flags.DEFINE_integer("local_t_max", 20, "repeat step size")
@@ -48,5 +48,5 @@ def get_options(option_type):
     tf.app.flags.DEFINE_string("frame_save_dir", "/tmp/unreal_frames", "frame save directory")
     tf.app.flags.DEFINE_boolean("recording", False, "whether to record movie")
     tf.app.flags.DEFINE_boolean("frame_saving", False, "whether to save frames")
-
+  
   return tf.app.flags.FLAGS

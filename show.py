@@ -11,8 +11,8 @@ from model.model import UnrealModel
 from train.experience import Experience, ExperienceFrame
 import pickle
 import os.path
-from options import get_options
 import tensorflow as tf
+from options import get_options
 
 flags = get_options("show")
 
@@ -42,9 +42,9 @@ class Agent(object):
     config = tf.ConfigProto(log_device_placement=False,
                             allow_soft_placement=True)
     config.gpu_options.allow_growth = True
-    sess = tf.Session(config=config)
+    self.sess = tf.Session(config=config)
     init = tf.global_variables_initializer()
-    sess.run(init)
+    self.sess.run(init)
     self.network = UnrealModel(self.action_size,
                                      -1,
                                      use_pixel_change,
@@ -59,7 +59,7 @@ class Agent(object):
     saver = tf.train.Saver()
     checkpoint = tf.train.get_checkpoint_state(flags.checkpoint_dir)
     if checkpoint and checkpoint.model_checkpoint_path:
-        saver.restore(sess, checkpoint.model_checkpoint_path)
+        saver.restore(self.sess, checkpoint.model_checkpoint_path)
         print("checkpoint loaded:", checkpoint.model_checkpoint_path)
     else:
         print("Could not find old checkpoint")
@@ -85,7 +85,7 @@ class Agent(object):
     return np.random.choice(range(len(pi_values)), p=pi_values)
 
 
-  def _run_episode(self, sess, epi_n, summary_writer=None, summary_op=None, score_input=None):
+  def _run_episode(self, epi_n, summary_writer=None, summary_op=None, score_input=None):
     # [Base A3C]
     states = []
     last_action_rewards = []
@@ -98,6 +98,7 @@ class Agent(object):
 
     # t_max times loop
     for epi_i in range(epi_n):
+      print(epi_i)
       while True:
         # Prepare last action reward
         last_action = self.environment.last_action
@@ -106,7 +107,7 @@ class Agent(object):
                                                                       self.action_size,
                                                                       last_reward)
         
-        pi_, value_ = self.network.run_base_policy_and_value(sess,
+        pi_, value_ = self.network.run_base_policy_and_value(self.sess,
                                                                    self.environment.last_state,
                                                                    last_action_reward)
         
@@ -151,9 +152,9 @@ class Agent(object):
           break
 
 
-def __main__():
+if __name__ == '__main__':
   device = "/cpu:0"
-  agent = Agent((flags.env_type,
+  agent = Agent(flags.env_type,
                 flags.env_name,
                 flags.use_pixel_change,
                 flags.use_value_replay,
@@ -164,13 +165,12 @@ def __main__():
                 flags.pixel_change_lambda,
                 flags.entropy_beta,
                 device,
-                flags.skip_step))
+                flags.skip_step)
   config = tf.ConfigProto(log_device_placement=False,
                             allow_soft_placement=True)
   config.gpu_options.allow_growth = True
-  sess = tf.Session(config=config)
-  agent._run_episode(sess, 1)
-  
+  agent._run_episode(10)
+
 
 
 
