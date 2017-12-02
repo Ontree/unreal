@@ -191,7 +191,7 @@ def show_reward_prediction(agent):
         encoder_output, frp_c = agent.get_prediction(history, action_one_hot)
         img = toimage(encoder_output[0])
         img.save('reward_data/pred_images/image_{0}.png'.format(i))
-        img = history[-1]
+        img = toimage(history[-1])
         img.save('reward_data/true_images/image_{0}.png'.format(i))
         pred_reward.append(frp_c)
     pickle.dump(pred_reward, open('reward_data/reward/pred_reward', 'wb'))
