@@ -33,7 +33,6 @@ def get_options(option_type):
     tf.app.flags.DEFINE_integer("local_t_max", 20, "repeat step size")
     tf.app.flags.DEFINE_float("rmsp_alpha", 0.99, "decay parameter for rmsprop")
     tf.app.flags.DEFINE_float("rmsp_epsilon", 0.1, "epsilon parameter for rmsprop")
-    tf.app.flags.DEFINE_string("log_file", '' , "log file directory")
     tf.app.flags.DEFINE_float("initial_alpha_low", 1e-4, "log_uniform low limit for learning rate")
     tf.app.flags.DEFINE_float("initial_alpha_high", 5e-3, "log_uniform high limit for learning rate")
     tf.app.flags.DEFINE_float("initial_alpha_log_rate", 0.5, "log_uniform interpolate rate for learning rate")
@@ -43,8 +42,8 @@ def get_options(option_type):
     tf.app.flags.DEFINE_integer("max_time_step", 100 * 10**7, "max time steps")
     tf.app.flags.DEFINE_integer("save_interval_step", 100 * 1000, "saving interval steps")
     tf.app.flags.DEFINE_boolean("grad_norm_clip", 40.0, "gradient norm clipping")
-    if tf.app.flags.FLAGS.log_file == '':
-      tf.app.flags.FLAGS.log_file = '/media/bighdd'+str(tf.app.flags.FLAGS.hdd)+'/minghai1/capstone/results2/' + tf.app.flags.FLAGS.name
+    tf.app.flags.DEFINE_string("log_file", '/media/bighdd'+str(tf.app.flags.FLAGS.hdd)+'/minghai1/capstone/results2/' + tf.app.flags.FLAGS.name , "log file directory")
+  
   # For display
   if option_type == 'display':
     tf.app.flags.DEFINE_string("frame_save_dir", "/tmp/unreal_frames", "frame save directory")
