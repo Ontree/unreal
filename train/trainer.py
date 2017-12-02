@@ -11,6 +11,7 @@ from model.model import UnrealModel
 from train.experience import Experience, ExperienceFrame
 import pickle
 import os.path
+import tensorflow as tf
 
 LOG_INTERVAL = 100
 PERFORMANCE_LOG_INTERVAL = 1000
