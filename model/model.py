@@ -355,7 +355,7 @@ class UnrealModel(object):
     entropy = -tf.reduce_sum(self.base_pi * log_pi, reduction_indices=1)
     
     # Policy loss (output)
-    policy_loss = -tf.reduce_sum( tf.reduce_sum( tf.multiply( log_pi, self.base_a ),
+    self.policy_loss = -tf.reduce_sum( tf.reduce_sum( tf.multiply( log_pi, self.base_a ),
                                                  reduction_indices=1 ) *
                                   self.base_adv + entropy * self._entropy_beta)
     
@@ -364,10 +364,10 @@ class UnrealModel(object):
     
     # Value loss (output)
     # (Learning rate for Critic is half of Actor's, so multiply by 0.5)
-    value_loss = 0.5 * tf.nn.l2_loss(self.base_r - self.base_v)
+    self.value_loss = 0.5 * tf.nn.l2_loss(self.base_r - self.base_v)
     
-    base_loss = policy_loss + value_loss
-    return base_loss
+    self.base_loss = self.policy_loss + self.value_loss
+    return self.base_loss
 
   
   def _pc_loss(self):
@@ -412,8 +412,8 @@ class UnrealModel(object):
     
     # Future reward prediction loss (output)
     frp_c = tf.clip_by_value(self.frp_c, 1e-20, 1.0)
-    frp_loss = -tf.reduce_sum(self.frp_c_target * tf.log(frp_c))
-    return frp_loss
+    self.frp_loss = -tf.reduce_sum(self.frp_c_target * tf.log(frp_c))
+    return self.frp_loss
     
   def _decoder_loss(self, lamb=0.01):
     self.ground_truth = tf.placeholder("float", [1, 84, 84, 3])
@@ -422,8 +422,8 @@ class UnrealModel(object):
       print(var.name)
     penalty = tf.reduce_sum(lamb * tf.stack([tf.nn.l2_loss(var) for var in var_collections]),
                             name='regularization')
-    decoder_loss = tf.reduce_mean(tf.nn.l2_loss(self.encoder_output - self.ground_truth, name = 'l2_loss')+penalty)
-    return decoder_loss
+    self.decoder_loss = tf.reduce_mean(tf.nn.l2_loss(self.encoder_output - self.ground_truth, name = 'l2_loss')+penalty)
+    return self.decoder_loss
 
 
   def prepare_loss(self):

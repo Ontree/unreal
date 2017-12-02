@@ -91,6 +91,13 @@ class Trainer(object):
 
   def stop(self):
     self.environment.stop()
+
+  def add_summary(self, step, name, value, writer):
+    summary = tf.Summary()
+    summary_value = summary.value.add()
+    summary_value.simple_value = float(value)
+    summary_value.tag = name
+    writer.add_summary(summary, step)
     
   def _anneal_learning_rate(self, global_time_step):
     learning_rate = self.initial_learning_rate * (self.max_global_time_step - global_time_step) / self.max_global_time_step
@@ -410,6 +417,7 @@ class Trainer(object):
       self.learning_rate_input: cur_learning_rate
     }
 
+
     # [Pixel change]
     if self.use_pixel_change:
       batch_pc_si, batch_pc_last_action_reward, batch_pc_a, batch_pc_R = self._process_pc(sess)
@@ -459,8 +467,20 @@ class Trainer(object):
       }
       feed_dict.update(ae_feed_dict)
 
+
     # Calculate gradients and copy them to global network.
-    sess.run( self.apply_gradients, feed_dict=feed_dict)
+    #sess.run( self.apply_gradients, feed_dict=feed_dict)
+    if self.use_autoencoder and self.use_future_reward_prediction:
+      decoder_loss, frp_loss, value_loss, policy_loss, _ = sess.run( [self.decoder_loss, self.frp_loss, self.value_loss, self.policy_loss, self.apply_gradients], feed_dict=feed_dict):
+      )self.add_summary(global_t, 'decoder_loss', decoder_loss, summary_writer
+      self.add_summary(global_t, 'frp_loss', frp_loss, summary_writer)
+    else:
+      value_loss, policy_loss, _ = sess.run( [self.value_loss, self.policy_loss, self.apply_gradients], feed_dict=feed_dict)
+    self.add_summary(global_t, 'value_loss', value_loss, summary_writer
+    self.add_summary(global_t, 'policy_loss', policy_loss, summary_writer)
+    self.add_summary(global_t, 'base_loss', policy_loss + value_loss, summary_writer)
+     
+      self.add_summary(global_t, 'V', value_, summary_writer)
 
 
     if self.use_autoencoder and global_t % 25000 == 0:
