@@ -196,7 +196,7 @@ def show_reward_prediction(agent):
         pred_reward.append(frp_c)
     pickle.dump(pred_reward, open('reward_data/reward/pred_reward', 'wb'))
     for i in range(len(pred_reward)):
-        print(i, pred_reward[i])
+        print(i, np.argmax(pred_reward[i][0]))
     agent.environment.stop()
     return
 
