@@ -472,12 +472,18 @@ class Trainer(object):
     # Calculate gradients and copy them to global network.
     #sess.run( self.apply_gradients, feed_dict=feed_dict)
     ln = self.local_network
-    if self.use_autoencoder and self.use_future_reward_prediction:
-      decoder_loss, frp_loss, value_loss, policy_loss, _ = sess.run( [ln.decoder_loss, ln.frp_loss, ln.value_loss, ln.policy_loss, self.apply_gradients], feed_dict=feed_dict)
-      self.add_summary(global_t, 'decoder_loss', decoder_loss, summary_writer)
-      self.add_summary(global_t, 'frp_loss', frp_loss, summary_writer)
+    if self.use_future_reward_prediction:
+      if self.use_autoencoder:
+        frp_c, decoder_loss, frp_loss, value_loss, policy_loss, _ = sess.run( [ln.frp_c, ln.decoder_loss, ln.frp_loss, ln.value_loss, ln.policy_loss, self.apply_gradients], feed_dict=feed_dict)
+        self.add_summary(global_t, 'decoder_loss', decoder_loss, summary_writer)
+        self.add_summary(global_t, 'frp_loss', frp_loss, summary_writer)
+      else:
+        frp_c, value_loss, policy_loss, _ = sess.run( [ln.frp_c, ln.value_loss, ln.policy_loss, self.apply_gradients], feed_dict=feed_dict)
+      acc = ((frp_c==frp_c.max())*batch_frp_c).sum()
+      self.add_summary(global_t, 'reward prediction accuracy', acc, summary_writer)
     else:
       value_loss, policy_loss, _ = sess.run( [ln.value_loss, ln.policy_loss, self.apply_gradients], feed_dict=feed_dict)
+
     self.add_summary(global_t, 'value_loss', value_loss, summary_writer)
     self.add_summary(global_t, 'policy_loss', policy_loss, summary_writer)
     self.add_summary(global_t, 'base_loss', policy_loss + value_loss, summary_writer)
