@@ -6,6 +6,11 @@ from __future__ import print_function
 import tensorflow as tf
 
 
+class Flags(object):
+  def __init__(self, FLAGS):
+    for att in FLAGS.__dict__['__flags']:
+      self.__setattr__(att, FLAGS.__dict__['__flags'][att])
+
 def get_options(option_type):
   """
   option_type: string
@@ -26,7 +31,7 @@ def get_options(option_type):
   # For training
   tf.app.flags.DEFINE_float("entropy_beta", 0.001, "entropy regularization constant")
   tf.app.flags.DEFINE_float("pixel_change_lambda", 0.05, "pixel change lambda") # 0.05, 0.01 ~ 0.1 for lab, 0.0001 ~ 0.01 for gym
-  tf.app.flags.DEFINE_string("checkpoint_dir", '', "checkpoint directory")
+  tf.app.flags.DEFINE_string("checkpoint_dir", None, "checkpoint directory")
   
   if option_type == 'training':
     tf.app.flags.DEFINE_integer("parallel_size", 8, "parallel hread size")
@@ -42,7 +47,7 @@ def get_options(option_type):
     tf.app.flags.DEFINE_integer("max_time_step", 100 * 10**7, "max time steps")
     tf.app.flags.DEFINE_integer("save_interval_step", 100 * 1000, "saving interval steps")
     tf.app.flags.DEFINE_boolean("grad_norm_clip", 40.0, "gradient norm clipping")
-    tf.app.flags.DEFINE_string("log_file", '/media/bighdd'+str(tf.app.flags.FLAGS.hdd)+'/minghai1/capstone/results2/' + tf.app.flags.FLAGS.name , "log file directory")
+    tf.app.flags.DEFINE_string("log_file", None , "log file directory")
   
   # For display
   if option_type == 'display':
@@ -50,7 +55,10 @@ def get_options(option_type):
     tf.app.flags.DEFINE_boolean("recording", False, "whether to record movie")
     tf.app.flags.DEFINE_boolean("frame_saving", False, "whether to save frames")
 
-  if tf.app.flags.FLAGS.checkpoint_dir == '':
+  if option_type == 'training' and not tf.app.flags.FLAGS.log_file:
+    tf.app.flags.FLAGS.log_file = '/media/bighdd'+str(tf.app.flags.FLAGS.hdd)+'/minghai1/capstone/results2/' + tf.app.flags.FLAGS.name
+  if not tf.app.flags.FLAGS.checkpoint_dir:
     tf.app.flags.FLAGS.checkpoint_dir = '/media/bighdd'+str(tf.app.flags.FLAGS.hdd)+'/minghai1/capstone/results2/' + tf.app.flags.FLAGS.name + '/checkpoints'
 
-  return tf.app.flags.FLAGS
+  return Flags(tf.app.flags.FLAGS)#tf.app.flags.FLAGS
+

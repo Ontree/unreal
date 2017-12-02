@@ -11,6 +11,7 @@ from model.model import UnrealModel
 from train.experience import Experience, ExperienceFrame
 import pickle
 import os.path
+import tensorflow as tf
 
 LOG_INTERVAL = 100
 PERFORMANCE_LOG_INTERVAL = 1000
@@ -91,6 +92,13 @@ class Trainer(object):
 
   def stop(self):
     self.environment.stop()
+
+  def add_summary(self, step, name, value, writer):
+    summary = tf.Summary()
+    summary_value = summary.value.add()
+    summary_value.simple_value = float(value)
+    summary_value.tag = name
+    writer.add_summary(summary, step)
     
   def _anneal_learning_rate(self, global_time_step):
     learning_rate = self.initial_learning_rate * (self.max_global_time_step - global_time_step) / self.max_global_time_step
@@ -410,6 +418,7 @@ class Trainer(object):
       self.learning_rate_input: cur_learning_rate
     }
 
+
     # [Pixel change]
     if self.use_pixel_change:
       batch_pc_si, batch_pc_last_action_reward, batch_pc_a, batch_pc_R = self._process_pc(sess)
@@ -459,9 +468,25 @@ class Trainer(object):
       }
       feed_dict.update(ae_feed_dict)
 
-    # Calculate gradients and copy them to global network.
-    sess.run( self.apply_gradients, feed_dict=feed_dict)
 
+    # Calculate gradients and copy them to global network.
+    #sess.run( self.apply_gradients, feed_dict=feed_dict)
+    ln = self.local_network
+    if self.use_future_reward_prediction:
+      if self.use_autoencoder:
+        frp_c, decoder_loss, frp_loss, value_loss, policy_loss, _ = sess.run( [ln.frp_c, ln.decoder_loss, ln.frp_loss, ln.value_loss, ln.policy_loss, self.apply_gradients], feed_dict=feed_dict)
+        self.add_summary(global_t, 'decoder_loss', decoder_loss, summary_writer)
+        self.add_summary(global_t, 'frp_loss', frp_loss, summary_writer)
+      else:
+        frp_c, value_loss, policy_loss, _ = sess.run( [ln.frp_c, ln.value_loss, ln.policy_loss, self.apply_gradients], feed_dict=feed_dict)
+      acc = ((frp_c==frp_c.max())*batch_frp_c).sum()
+      self.add_summary(global_t, 'reward prediction accuracy', acc, summary_writer)
+    else:
+      value_loss, policy_loss, _ = sess.run( [ln.value_loss, ln.policy_loss, self.apply_gradients], feed_dict=feed_dict)
+
+    self.add_summary(global_t, 'value_loss', value_loss, summary_writer)
+    self.add_summary(global_t, 'policy_loss', policy_loss, summary_writer)
+    self.add_summary(global_t, 'base_loss', policy_loss + value_loss, summary_writer)
 
     if self.use_autoencoder and global_t % 25000 == 0:
       current_res = {'next_frame_ground_truth': next_frame, 'step': global_t}
