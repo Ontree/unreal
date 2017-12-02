@@ -186,7 +186,7 @@ def show_reward_prediction(agent):
         history = []
         for j in range(4):
             history.append(frame_list[i - 3 + j].state)
-        action_one_hot = np.zeors((1, agent.action_size))
+        action_one_hot = np.zeros((1, agent.action_size))
         action_one_hot[0][frame_list[i].action] = 1
         encoder_output, frp_c = agent.get_prediction(history, action_one_hot)
         img = toimage(encoder_output[0])
