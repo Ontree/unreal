@@ -29,7 +29,6 @@ def get_options(option_type):
   tf.app.flags.DEFINE_string("checkpoint_dir", '', "checkpoint directory")
   
   if option_type == 'training':
-    tf.app.flags.DEFINE_string("log_file", None , "log file directory")
     tf.app.flags.DEFINE_integer("parallel_size", 8, "parallel hread size")
     tf.app.flags.DEFINE_integer("local_t_max", 20, "repeat step size")
     tf.app.flags.DEFINE_float("rmsp_alpha", 0.99, "decay parameter for rmsprop")
@@ -43,15 +42,13 @@ def get_options(option_type):
     tf.app.flags.DEFINE_integer("max_time_step", 100 * 10**7, "max time steps")
     tf.app.flags.DEFINE_integer("save_interval_step", 100 * 1000, "saving interval steps")
     tf.app.flags.DEFINE_boolean("grad_norm_clip", 40.0, "gradient norm clipping")
+    tf.app.flags.DEFINE_string("log_file", '/media/bighdd'+str(tf.app.flags.FLAGS.hdd)+'/minghai1/capstone/results2/' + tf.app.flags.FLAGS.name , "log file directory")
   
   # For display
   if option_type == 'display':
     tf.app.flags.DEFINE_string("frame_save_dir", "/tmp/unreal_frames", "frame save directory")
     tf.app.flags.DEFINE_boolean("recording", False, "whether to record movie")
     tf.app.flags.DEFINE_boolean("frame_saving", False, "whether to save frames")
-
-  if option_type == 'training' and not tf.app.flags.FLAGS.log_file:
-      tf.app.flags.FLAGS.log_file = '/media/bighdd'+str(tf.app.flags.FLAGS.hdd)+'/minghai1/capstone/results2/' + tf.app.flags.FLAGS.name
 
   if tf.app.flags.FLAGS.checkpoint_dir == '':
     tf.app.flags.FLAGS.checkpoint_dir = '/media/bighdd'+str(tf.app.flags.FLAGS.hdd)+'/minghai1/capstone/results2/' + tf.app.flags.FLAGS.name + '/checkpoints'
