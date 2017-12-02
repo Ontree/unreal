@@ -84,8 +84,10 @@ class Agent(object):
   def choose_action(self, pi_values):
     return np.random.choice(range(len(pi_values)), p=pi_values)
 
+  def dumb_action(self, pi_values):
+      return 0
 
-  def _run_episode(self, epi_n, summary_writer=None, summary_op=None, score_input=None):
+  def _run_episode(self, epi_n, summary_writer=None, summary_op=None, score_input=None, policy_func=choose_action):
     # [Base A3C]
     states = []
     last_action_rewards = []
@@ -112,7 +114,7 @@ class Agent(object):
                                                                    last_action_reward)
         
         
-        action = self.choose_action(pi_)
+        action = policy_func(pi_)
 
         states.append(self.environment.last_state)
         last_action_rewards.append(last_action_reward)
@@ -150,8 +152,48 @@ class Agent(object):
       global_network = self.network
       feed_dict = {global_network.frp_input: history, #np.zeros((4, 84, 84, 3))
                    global_network.frp_action_input: action} #np.zeros((1, action_size)) fake frames and action input
-      encoder_output = self.sess.run(global_network.encoder_output, feed_dict)
-      return encoder_output
+      encoder_output, frp_c = self.sess.run([global_network.encoder_output, global_network.frp_c], feed_dict)
+      return [encoder_output, frp_c]
+
+
+def show_image_prediction(agent):
+    agent._run_episode(10)
+    with open('visualize_data/agent', 'wb') as f:
+        pickle.dump(agent.experience, f)
+    for j in range(10):
+        rp_experience_frames, _, _ = agent.experience.sample_rp_sequence()
+        history = []
+        for i in range(4):
+            history.append(rp_experience_frames[i].state)
+        for k in range(agent.action_size):
+            action_one_hot = np.zeros((1, agent.action_size))
+            action_one_hot[0][k] = 1
+            encoder_output, frp_c = agent.get_prediction(history, action_one_hot)
+            print('start dump')
+            img = toimage(encoder_output[0])
+            img.save('image_data/sample_image_{0}_action_{1}.png'.format(j, k))
+            print('end dump')
+
+    print('end of program')
+    agent.environment.stop()
+
+
+def show_reward_prediction(agent):
+    agent._run_episode(10, policy_func=agent.dumb_action)
+    frame_list = agent.experience._frames
+    pred_reward = []
+    for i in range(3, len(frame_list)):
+        history = []
+        for j in range(4):
+            history.append(frame_list[i - 3 + j].state)
+        action_one_hot = np.zeors((1, agent.action_size))
+        action_one_hot[0][frame_list[i].action] = 1
+        encoder_output, frp_c = agent.get_prediction(history, action_one_hot)
+        img = toimage(encoder_output[0])
+        img.save('reward_data/images/image_{1}.png'.format(i))
+        pred_reward.append(frp_c)
+    pickle.dump(pred_reward, open('reward_data/reward/pred_reward', 'wb'))
+    return
 
 if __name__ == '__main__':
   device = "/cpu:0"
@@ -167,27 +209,7 @@ if __name__ == '__main__':
                 flags.entropy_beta,
                 device,
                 flags.skip_step)
-  config = tf.ConfigProto(log_device_placement=False,
-                            allow_soft_placement=True)
-  config.gpu_options.allow_growth = True
-  agent._run_episode(10)
-  with open('visualize_data/agent', 'wb') as f:
-    pickle.dump(agent.experience, f)
-  for j in range(10):
-      rp_experience_frames, _, _ = agent.experience.sample_rp_sequence()
-      history = []
-      for i in range(4):
-          history.append(rp_experience_frames[i].state)
-      for k in range(agent.action_size):
-          action_one_hot = np.zeros((1,agent.action_size))
-          action_one_hot[0][k] = 1
-          encoder_output = agent.get_prediction(history, action_one_hot)
-          print('start dump')
-          img = toimage(encoder_output[0])
-          img.save('image_data/sample_image_{0}_action_{1}.png'.format(j, k))
-          print('end dump')
 
-  print('end of program')
-  agent.environment.stop()
+  show_image_prediction(agent)
 
   
