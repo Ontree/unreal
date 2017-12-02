@@ -55,9 +55,8 @@ def get_options(option_type):
     tf.app.flags.DEFINE_boolean("recording", False, "whether to record movie")
     tf.app.flags.DEFINE_boolean("frame_saving", False, "whether to save frames")
 
-  hdd = str(tf.app.flags.FLAGS.hdd)
   if option_type == 'training' and not tf.app.flags.FLAGS.log_file:
-    tf.app.flags.FLAGS.log_file = '/media/bighdd'+hdd+'/minghai1/capstone/results2/' + tf.app.flags.FLAGS.name
+    tf.app.flags.FLAGS.log_file = '/media/bighdd'+tf.app.flags.FLAGS.hdd+'/minghai1/capstone/results2/' + tf.app.flags.FLAGS.name
   if not tf.app.flags.FLAGS.checkpoint_dir:
     tf.app.flags.FLAGS.checkpoint_dir = '/media/bighdd'+str(tf.app.flags.FLAGS.hdd)+'/minghai1/capstone/results2/' + tf.app.flags.FLAGS.name + '/checkpoints'
 
