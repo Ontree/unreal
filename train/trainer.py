@@ -471,7 +471,7 @@ class Trainer(object):
     # Calculate gradients and copy them to global network.
     #sess.run( self.apply_gradients, feed_dict=feed_dict)
     if self.use_autoencoder and self.use_future_reward_prediction:
-      decoder_loss, frp_loss, value_loss, policy_loss, _ = sess.run( [self.decoder_loss, self.frp_loss, self.value_loss, self.policy_loss, self.apply_gradients], feed_dict=feed_dict):
+      decoder_loss, frp_loss, value_loss, policy_loss, _ = sess.run( [self.decoder_loss, self.frp_loss, self.value_loss, self.policy_loss, self.apply_gradients], feed_dict=feed_dict)
       )self.add_summary(global_t, 'decoder_loss', decoder_loss, summary_writer
       self.add_summary(global_t, 'frp_loss', frp_loss, summary_writer)
     else:
