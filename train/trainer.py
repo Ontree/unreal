@@ -479,9 +479,6 @@ class Trainer(object):
     self.add_summary(global_t, 'value_loss', value_loss, summary_writer)
     self.add_summary(global_t, 'policy_loss', policy_loss, summary_writer)
     self.add_summary(global_t, 'base_loss', policy_loss + value_loss, summary_writer)
-     
-      self.add_summary(global_t, 'V', value_, summary_writer)
-
 
     if self.use_autoencoder and global_t % 25000 == 0:
       current_res = {'next_frame_ground_truth': next_frame, 'step': global_t}
