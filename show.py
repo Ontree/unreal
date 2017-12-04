@@ -179,24 +179,24 @@ def show_image_prediction(agent):
 
 
 def show_reward_prediction(agent):
-    agent._run_episode(1, policy_func=agent.dumb_action)
+    agent._run_episode(3, policy_func=agent.choose_action)
     frame_list = agent.experience._frames
     pred_reward = []
     for i in range(3, len(frame_list)):
         history = []
         for j in range(4):
             history.append(frame_list[i - 3 + j].state)
-        action_one_hot = np.zeros((1, agent.action_size))
-        action_one_hot[0][frame_list[i].action] = 1
-        encoder_output, frp_c = agent.get_prediction(history, action_one_hot)
-        img = toimage(encoder_output[0])
-        img.save('reward_data/pred_images/image_{0}.png'.format(i))
+        reward_predictions = []
+        for k in range(agent.action_size):
+            action_one_hot = np.zeros((1, agent.action_size))
+            action_one_hot[0][k] = 1
+            encoder_output, frp_c = agent.get_prediction(history, action_one_hot)
+            reward_predictions.append(np.argmax(frp_c[0]))
         img = toimage(history[-1])
-        img.save('reward_data/true_images/image_{0}.png'.format(i))
-        pred_reward.append(frp_c)
-    pickle.dump(pred_reward, open('reward_data/reward/pred_reward', 'wb'))
-    for i in range(len(pred_reward)):
-        print(i, np.argmax(pred_reward[i][0]))
+        img.save('reward_data1/true_images/image_{0}.png'.format(i))
+        pred_reward.append(reward_predictions)
+
+    pickle.dump(pred_reward, open('reward_data1/reward/pred_reward', 'wb'))
     agent.environment.stop()
     return
 
@@ -215,6 +215,6 @@ if __name__ == '__main__':
                 device,
                 flags.skip_step)
 
-  show_image_prediction(agent)
+  show_reward_prediction(agent)
 
   
