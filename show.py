@@ -87,7 +87,7 @@ class Agent(object):
   def dumb_action(self, pi_values):
       return 0
 
-  def _run_episode(self, epi_n, summary_writer=None, summary_op=None, score_input=None, policy_func=choose_action):
+  def _run_episode(self, epi_n, summary_writer=None, summary_op=None, score_input=None, policy_func='choose_action'):
     # [Base A3C]
     states = []
     last_action_rewards = []
@@ -113,9 +113,11 @@ class Agent(object):
                                                                    self.environment.last_state,
                                                                    last_action_reward)
         
-        
-        action = policy_func(self, pi_)
-
+        if policy_func == 'choose_action':
+            action = self.choose_action(pi_)
+        else:
+            action = self.dumb_action(pi_)
+            
         states.append(self.environment.last_state)
         last_action_rewards.append(last_action_reward)
         actions.append(action)
@@ -179,7 +181,7 @@ def show_image_prediction(agent):
 
 
 def show_reward_prediction(agent):
-    agent._run_episode(3, policy_func=agent.choose_action)
+    agent._run_episode(3, policy_func='choose_action')
     frame_list = agent.experience._frames
     pred_reward = []
     for i in range(3, len(frame_list)):
