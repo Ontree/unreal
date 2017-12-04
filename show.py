@@ -114,7 +114,7 @@ class Agent(object):
                                                                    last_action_reward)
         
         
-        action = policy_func(pi_)
+        action = policy_func(self, pi_)
 
         states.append(self.environment.last_state)
         last_action_rewards.append(last_action_reward)
