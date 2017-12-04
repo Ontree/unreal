@@ -174,7 +174,7 @@ def show_image_prediction(agent):
             img = toimage(encoder_output[0])
             img.save('image_data1/prediction/sample_image_{0}_action_{1}.png'.format(j, k))
         for i in range(4):
-            img = toimage(historimg.save('image_data1/sample_image_{0}_action_{1}.png'.format(j, k))y[i])
+            img = toimage(history[i])
             img.save('image_data1/groundtruth/sample_iter_{0}_seq_{1}.png'.format(j,i))
     print('end of program')
     agent.environment.stop()
