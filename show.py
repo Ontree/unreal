@@ -117,7 +117,7 @@ class Agent(object):
             action = self.choose_action(pi_)
         else:
             action = self.dumb_action(pi_)
-            
+
         states.append(self.environment.last_state)
         last_action_rewards.append(last_action_reward)
         actions.append(action)
@@ -171,11 +171,11 @@ def show_image_prediction(agent):
             action_one_hot = np.zeros((1, agent.action_size))
             action_one_hot[0][k] = 1
             encoder_output, frp_c = agent.get_prediction(history, action_one_hot)
-            print('start dump')
             img = toimage(encoder_output[0])
-            img.save('image_data/sample_image_{0}_action_{1}.png'.format(j, k))
-            print('end dump')
-
+            img.save('image_data1/prediction/sample_image_{0}_action_{1}.png'.format(j, k))
+        for i in range(4):
+            img = toimage(historimg.save('image_data1/sample_image_{0}_action_{1}.png'.format(j, k))y[i])
+            img.save('image_data1/groundtruth/sample_iter_{0}_seq_{1}.png'.format(j,i))
     print('end of program')
     agent.environment.stop()
 
@@ -217,6 +217,6 @@ if __name__ == '__main__':
                 device,
                 flags.skip_step)
 
-  show_reward_prediction(agent)
+  show_image_prediction(agent)
 
   
