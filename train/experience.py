@@ -142,9 +142,9 @@ class Experience(object):
           index = np.random.randint(len(self._non_zero_reward_indices))
           end_frame_index = self._non_zero_reward_indices[index]
           end_frame_index = random.randrange(end_frame_index-(self._reward_length - 1), end_frame_index+1)
-        counter += 1
-        if counter >= 20:
-          return self.sample_rp_sequence()
+          counter += 1
+          if counter >= 20:
+            return self.sample_rp_sequence()
 
     start_frame_index = end_frame_index-3
     raw_start_frame_index = start_frame_index - self._top_frame_index
