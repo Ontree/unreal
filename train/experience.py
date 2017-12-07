@@ -129,15 +129,22 @@ class Experience(object):
       # non zero rewards container was empty
       from_zero = True
     end_frame_index = None
+    counter = 0
     if from_zero:
       while not end_frame_index or not end_frame_index-3-self._top_frame_index >= 0 or end_frame_index + (self._reward_length - 1) - self._top_frame_index >= len(self._frames) - 1:
         index = np.random.randint(len(self._zero_reward_indices))
         end_frame_index = self._zero_reward_indices[index]
+        counter += 1
+        if counter >= 20:
+          return self.sample_rp_sequence()
     else:
       while not end_frame_index or not end_frame_index-3-self._top_frame_index >= 0 or end_frame_index + (self._reward_length - 1) - self._top_frame_index >= len(self._frames) - 1:
           index = np.random.randint(len(self._non_zero_reward_indices))
           end_frame_index = self._non_zero_reward_indices[index]
           end_frame_index = random.randrange(end_frame_index-(self._reward_length - 1), end_frame_index+1)
+        counter += 1
+        if counter >= 20:
+          return self.sample_rp_sequence()
 
     start_frame_index = end_frame_index-3
     raw_start_frame_index = start_frame_index - self._top_frame_index
