@@ -355,7 +355,7 @@ class Trainer(object):
 
   def _process_replay(self, action=False):
     # [Reward prediction]
-    rp_experience_frames, total_raw_reward, next_frame = self.experience.sample_rp_sequence()
+    rp_experience_frames, total_raw_reward, next_frame = self.experience.sample_rp_sequence(flag=True)
     # 4 frames
 
     batch_rp_si = []

@@ -113,14 +113,21 @@ class Experience(object):
     return sampled_frames
 
   
-  def sample_rp_sequence(self):
+  def sample_rp_sequence(self, flag=False):
     """
     Sample 4 successive frames for reward prediction.
     """
-    if np.random.randint(2) == 0:
-      from_zero = True
+    if flag:
+      threshold = len(self._zero_reward_indices) / (len(self._zero_reward_indices) + len(self._non_zero_reward_indices))
+      if random.random() < threshold:
+        from_zero = True
+      else:
+        from_zero = False
     else:
-      from_zero = False
+      if np.random.randint(2) == 0:
+        from_zero = True
+      else:
+        from_zero = False
     
     if len(self._zero_reward_indices) == 0:
       # zero rewards container was empty
