@@ -183,6 +183,9 @@ def show_image_prediction(agent):
 def show_reward_prediction(agent):
     agent._run_episode(3, policy_func='choose_action')
     frame_list = agent.experience._frames
+    for i in range(len(frame_list)):
+        img = frame_list[i]
+        img.save('reward_image/history/image_{0}.png'.format(i))
     pred_reward = []
     for i in range(3, len(frame_list)):
         history = []
@@ -194,11 +197,11 @@ def show_reward_prediction(agent):
             action_one_hot[0][k] = 1
             encoder_output, frp_c = agent.get_prediction(history, action_one_hot)
             reward_predictions.append(np.argmax(frp_c[0]))
-        img = toimage(history[-1])
-        img.save('reward_data1/true_images/image_{0}.png'.format(i))
+            img = toimage(encoder_output[0])
+            img.save('reward_image/prediction/index_{0}_action_{1}.png'.format(i, k))
         pred_reward.append(reward_predictions)
 
-    pickle.dump(pred_reward, open('reward_data1/reward/pred_reward', 'wb'))
+    pickle.dump(pred_reward, open('reward_image/reward/pred_reward', 'wb'))
     agent.environment.stop()
     return
 
