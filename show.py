@@ -181,10 +181,10 @@ def show_image_prediction(agent):
 
 
 def show_reward_prediction(agent):
-    agent._run_episode(3, policy_func='choose_action')
+    agent._run_episode(1, policy_func='choose_action')
     frame_list = agent.experience._frames
     for i in range(len(frame_list)):
-        img = frame_list[i].state
+        img = toimage(frame_list[i].state)
         img.save('reward_image/history/image_{0}.png'.format(i))
     pred_reward = []
     for i in range(3, len(frame_list)):
@@ -220,6 +220,6 @@ if __name__ == '__main__':
                 device,
                 flags.skip_step)
 
-  show_image_prediction(agent)
+  show_reward_prediction(agent)
 
   
