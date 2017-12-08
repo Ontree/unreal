@@ -184,7 +184,7 @@ def show_reward_prediction(agent):
     agent._run_episode(3, policy_func='choose_action')
     frame_list = agent.experience._frames
     for i in range(len(frame_list)):
-        img = frame_list[i]
+        img = frame_list[i].state
         img.save('reward_image/history/image_{0}.png'.format(i))
     pred_reward = []
     for i in range(3, len(frame_list)):
