@@ -118,7 +118,7 @@ class Experience(object):
     Sample 4 successive frames for reward prediction.
     """
     if flag:
-      threshold = len(self._zero_reward_indices) / (len(self._zero_reward_indices) + len(self._non_zero_reward_indices))
+      threshold = float(len(self._zero_reward_indices) / (len(self._zero_reward_indices) + len(self._non_zero_reward_indices)))
       if random.random() < threshold:
         from_zero = True
       else:
